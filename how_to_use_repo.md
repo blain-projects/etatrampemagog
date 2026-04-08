@@ -7,23 +7,27 @@ This repository is a production-ready boilerplate for modern fullstack applicati
 ## ⚡ Quickstart
 
 
-Ouvre deux terminaux et copie-colle les commandes suivantes :
+Open two terminals and copy-paste the following commands:
 
 ### Frontend
 ```sh
 cd frontend
-npm install # (seulement la première fois)
+npm install # (only the first time)
 npm run dev
-# Accès : http://localhost:5173
+# Access: http://localhost:5173
 ```
 
 ### Backend
 ```sh
 cd backend
-# (Optionnel) python -m venv .venv && .\.venv\Scripts\activate
+
+# OPTIONAL
+python -m venv .venv
+.\.venv\Scripts\activate
+
 pip install -r requirements.txt
 python app.py
-# Accès : http://localhost:5000/api/health
+# Access: http://localhost:5000/api/health
 ```
 
 ---
