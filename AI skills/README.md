@@ -13,6 +13,7 @@ This directory centralizes technical context and working rules for AI agents bui
 - `deployment-modes.md`: simple deployment mode contract (`secure` vs `public`).
 - `REFERENCE_deploy.sh.md`: reference deployment orchestration script run by OpenClaw/server manager.
 - `skill-authoring-ide-agnostic.md`: skill-authoring standard + targeted `.cursor/.agent` rule strategy.
+- `steel-signature-colors.md`: canonical Steel Signature color/token rules for frontend work, including the required header light/dark theme control.
 
 ## Purpose
 

@@ -1,0 +1,27 @@
+---
+description: Load Steel Signature color rules and global frontend chrome conventions.
+globs:
+  - "frontend/**/*"
+---
+
+# Frontend Steel Signature Colors
+
+When working in frontend files, load and follow:
+
+- `AI skills/steel-signature-colors.md`
+
+Scope:
+
+- Applies to visual styling, components, layouts, and UI state changes in frontend code.
+- Does not apply to backend-only changes.
+
+## Header theme control (required for all projects)
+
+- Every app shell must include a **light / dark theme control in the header** (primary top bar / `top-nav`), not only on a settings page.
+- Wire it to `data-theme="light"` / `data-theme="dark"` on the document root (or equivalent single source of truth), with **system preference** as the default when no user choice is stored.
+- When adding new layouts, navigation, or replacing the shell, **preserve or reintroduce** this header control unless the user explicitly opts out for a specific task.
+
+Constraints:
+
+- Use existing Steel Signature tokens before introducing new color values.
+- Keep light/dark parity for any new UI styling.
