@@ -1,31 +1,135 @@
+###############################################################################
+# Docker Compose — Fullstack Web Project Template
+#
+# DEPLOYMENT TARGET: blain-projects.ca server
+# REVERSE PROXY:     Traefik v3.6.1 (auto-SSL via Let's Encrypt)
+# NETWORK:           web_network (shared Docker bridge — external)
+#
+# ENVIRONMENT VARIABLES (auto-injected by deploy.sh into .env):
+#   PROJECT_NAME  — used in container names, Traefik router names, subdomain
+#   DOMAIN_NAME   — always "blain-projects.ca"
+#
+# RESULTING URLs:
+#   Frontend → https://${PROJECT_NAME}.blain-projects.ca
+#   Backend  → https://api.${PROJECT_NAME}.blain-projects.ca
+#
+# SECURITY:
+#   To make this project PRIVATE (Google login required), keep the
+#   "middlewares=google-auth@docker" label on the frontend router.
+#   To make it PUBLIC, remove or comment out that single label.
+#   See README.md § Security & Authentication for full details.
+###############################################################################
+
 services:
+
+  # ── Frontend (React 19 / Nginx) ──────────────────────────────────────────
   frontend:
     build: ./frontend
     container_name: ${PROJECT_NAME}-front
     restart: unless-stopped
     networks:
-      - web_network
+      - web_network          # REQUIRED — Traefik can only route to this network
+    # NO "ports:" section — Traefik handles all external access via labels.
+    # Exposing ports directly would bypass Traefik (no SSL, no auth).
     labels:
       - "traefik.enable=true"
+
+      # Router: match requests for this subdomain
       - "traefik.http.routers.${PROJECT_NAME}-front.rule=Host(`${PROJECT_NAME}.${DOMAIN_NAME}`)"
+
+      # Entrypoint: HTTPS only (Traefik auto-redirects HTTP→HTTPS)
       - "traefik.http.routers.${PROJECT_NAME}-front.entrypoints=websecure"
+
+      # TLS: use the Let's Encrypt resolver (auto-provisioned certificate)
       - "traefik.http.routers.${PROJECT_NAME}-front.tls.certresolver=myresolver"
+
+      # Service: tell Traefik which container port to forward to
       - "traefik.http.services.${PROJECT_NAME}-front.loadbalancer.server.port=80"
+
+      # ┌─────────────────────────────────────────────────────────────────┐
+      # │ SECURITY: Google Authentication Middleware                      │
+      # │                                                                 │
+      # │ This middleware forces Google OAuth login before serving the     │
+      # │ page. Only whitelisted emails can access the site.              │
+      # │                                                                 │
+      # │ ✅ PRIVATE project  → keep this label                          │
+      # │ ❌ PUBLIC project   → comment out or remove this label          │
+      # └─────────────────────────────────────────────────────────────────┘
       - "traefik.http.routers.${PROJECT_NAME}-front.middlewares=google-auth@docker"
 
+  # ── Backend (Python Flask / Gunicorn) ────────────────────────────────────
   backend:
     build: ./backend
     container_name: ${PROJECT_NAME}-back
     restart: unless-stopped
     networks:
       - web_network
+    # NO "ports:" — same reasoning as frontend.
     labels:
       - "traefik.enable=true"
+
+      # Router: match requests for the api.* subdomain
       - "traefik.http.routers.${PROJECT_NAME}-back.rule=Host(`api.${PROJECT_NAME}.${DOMAIN_NAME}`)"
+
       - "traefik.http.routers.${PROJECT_NAME}-back.entrypoints=websecure"
       - "traefik.http.routers.${PROJECT_NAME}-back.tls.certresolver=myresolver"
       - "traefik.http.services.${PROJECT_NAME}-back.loadbalancer.server.port=5000"
 
+      # ┌─────────────────────────────────────────────────────────────────┐
+      # │ SECURITY: Backend API Authentication                            │
+      # │                                                                 │
+      # │ When the frontend is PRIVATE (google-auth above), the API       │
+      # │ should ALSO be protected. We use two routers:                   │
+      # │  1. Main router: all methods except OPTIONS → google-auth       │
+      # │  2. CORS router: OPTIONS only → no auth (preflight must pass)   │
+      # │                                                                 │
+      # │ The frontend must send credentials: 'include' in fetch() calls  │
+      # │ so the auth cookie is forwarded to the API subdomain.           │
+      # │                                                                 │
+      # │ ⚠️  See NETWORK.md for full explanation and troubleshooting.    │
+      # │                                                                 │
+      # │ ✅ PRIVATE project → keep these lines                          │
+      # │ ❌ PUBLIC project  → comment out ALL lines below                │
+      # └─────────────────────────────────────────────────────────────────┘
+      - "traefik.http.routers.${PROJECT_NAME}-back.middlewares=google-auth@docker"
+      # CORS preflight router — lets OPTIONS through without auth
+      - "traefik.http.routers.${PROJECT_NAME}-back-cors.rule=Host(`api.${PROJECT_NAME}.${DOMAIN_NAME}`) && Method(`OPTIONS`)"
+      - "traefik.http.routers.${PROJECT_NAME}-back-cors.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-back-cors.tls.certresolver=myresolver"
+      - "traefik.http.routers.${PROJECT_NAME}-back-cors.priority=200"
+      - "traefik.http.routers.${PROJECT_NAME}-back-cors.service=${PROJECT_NAME}-back"
+
+  # ── Additional services (uncomment as needed) ───────────────────────────
+  #
+  # PostgreSQL:
+  #   db:
+  #     image: postgres:15-alpine
+  #     container_name: ${PROJECT_NAME}-db
+  #     restart: unless-stopped
+  #     environment:
+  #       POSTGRES_DB: ${PROJECT_NAME}
+  #       POSTGRES_USER: app
+  #       POSTGRES_PASSWORD: changeme     # ← use a real password
+  #     volumes:
+  #       - db_data:/var/lib/postgresql/data
+  #     networks:
+  #       - web_network
+  #     # DB does NOT need traefik labels — it's internal only.
+  #     # Backend reaches it via: postgresql://app:changeme@${PROJECT_NAME}-db:5432/${PROJECT_NAME}
+  #
+  # Redis:
+  #   redis:
+  #     image: redis:7-alpine
+  #     container_name: ${PROJECT_NAME}-redis
+  #     restart: unless-stopped
+  #     networks:
+  #       - web_network
+  #     # Internal only — backend reaches it via: redis://${PROJECT_NAME}-redis:6379
+  #
+  # volumes:
+  #   db_data:
+
 networks:
   web_network:
-    external: true
+    external: true    # This network is created once and shared across ALL projects.
+                      # Create it with: docker network create web_network

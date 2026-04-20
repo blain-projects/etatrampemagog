@@ -67,9 +67,9 @@ Crucial distinction for developers:
 
 ## ⚠️ Critical Development Notes
 
-- **React Compiler:** This template uses the new React 19 Compiler. You no longer need `useMemo` or `useCallback` in most cases; the compiler optimizes re-renders automatically.
-- **CORS Management:** The Python backend uses `flask-cors`. This is mandatory for cross-subdomain communication.
-- **Statelessness:** Docker containers are **ephemeral**. Any file saved inside a container will be deleted on the next deploy. Use **Volumes** for persistent data.
+* **React Compiler:** This template uses the new React 19 Compiler. You no longer need `useMemo` or `useCallback` in most cases; the compiler optimizes re-renders automatically.
+* **CORS & Authentication:** The backend uses `flask-cors` with explicit origins and `supports_credentials=True`. The frontend **must** use `credentials: 'include'` in all `fetch()` calls. **Read `NETWORK.md`** for the full explanation of the dual-router pattern and common pitfalls.
+* **Statelessness:** Docker containers are **ephemeral**. Any file saved inside a container will be deleted on the next deploy. Use **Volumes** for persistent data.
 
 ---
 
