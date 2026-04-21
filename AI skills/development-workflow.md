@@ -10,6 +10,7 @@
 
 - Make incremental changes.
 - Verify API compatibility for every changed/added endpoint.
+- For AI streaming or real-time features, follow `AI skills/AI_STREAMING_WEBSOCKETS.md`.
 - Update technical documentation when contracts change.
 
 ## 3) Local verification

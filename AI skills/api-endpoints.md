@@ -12,6 +12,11 @@
   - error: `error` or `message` + appropriate HTTP status code.
 - Avoid ambiguous routes; name by resource (`/api/users`, `/api/orders/:id`).
 
+## Real-time & AI Streaming (WebSockets)
+
+- For generative AI or high-frequency updates, use **WebSockets** instead of standard HTTP to avoid timeouts.
+- Refer to `AI skills/AI_STREAMING_WEBSOCKETS.md` for the mandatory implementation pattern (FastAPI + React 19).
+
 ## CORS and frontend API calls
 
 - Keep `CORSMiddleware` configured.
