@@ -1,13 +1,14 @@
 ---
-description: Load Steel Signature color rules and global frontend chrome conventions.
+description: Load Frontend Design System rules (Tailwind v4, Shadcn, Steel Signature).
 globs:
   - "frontend/**/*"
 ---
 
-# Frontend Steel Signature Colors
+# Frontend Design System
 
 When working in frontend files, load and follow:
 
+- `AI skills/frontend-design-system.md`
 - `AI skills/steel-signature-colors.md`
 
 Scope:
@@ -15,13 +16,14 @@ Scope:
 - Applies to visual styling, components, layouts, and UI state changes in frontend code.
 - Does not apply to backend-only changes.
 
-## Header theme control (required for all projects)
+## Global directrices
 
+- Default to using the unified Tailwind v4 + Shadcn framework for new requested components.
+- Be extremely careful about Tailwind v4 configuration behaviors (see the skill document).
 - Every app shell must include a **light / dark theme control in the header** (primary top bar / `top-nav`), not only on a settings page.
 - Wire it to `data-theme="light"` / `data-theme="dark"` on the document root (or equivalent single source of truth), with **system preference** as the default when no user choice is stored.
-- When adding new layouts, navigation, or replacing the shell, **preserve or reintroduce** this header control unless the user explicitly opts out for a specific task.
 
 Constraints:
 
-- Use existing Steel Signature tokens before introducing new color values.
-- Keep light/dark parity for any new UI styling.
+- Use existing Steel Signature variables (now mapped to standard Shadcn primary/background tokens).
+- Maintain light/dark parity for any new UI styling.
