@@ -1,5 +1,9 @@
 # 🚀 Web Projects Template — React 19 + FastAPI + Docker
 
+<p align="center">
+  <img src=".github/assets/hero-banner.png" alt="Fullstack Hybrid Template" width="100%">
+</p>
+
 > **Fullstack boilerplate** avec React 19 Compiler + Vite + TypeScript + Python FastAPI + Docker/Traefik.
 > Fork ce projet pour lancer un nouveau projet web — tout est pré-configuré.
 
@@ -43,7 +47,7 @@ Ce template intègre des **best practices de Everything Claude Code (ECC)** adap
 |---------|-------------|
 | `.cursorrules` | Règles globales (KISS, DRY, YAGNI, immutabilité) |
 | `.cursor/rules/typescript-react.mdc` | React 19 + TypeScript + Vite |
-| `.cursor/rules/python-flask.mdc` | Python + Flask backend |
+| `.cursor/rules/python-fastapi.mdc` | Python + FastAPI backend |
 | `.cursor/rules/api-context.mdc` | API endpoints |
 | `.cursor/rules/deployment-context.mdc` | Docker/Traefik |
 | `.cursor/rules/security.mdc` | Sécurité (secrets, XSS, SQLi) |
