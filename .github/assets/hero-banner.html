@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #0D1117;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+    z-index: 0;
+  }
+
+  /* Gradient orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+  }
+  .orb-blue {
+    width: 300px; height: 300px;
+    background: rgba(97, 218, 251, 0.15);
+    top: -50px; left: -50px;
+  }
+  .orb-green {
+    width: 250px; height: 250px;
+    background: rgba(0, 150, 136, 0.15);
+    bottom: -30px; right: -30px;
+  }
+  .orb-purple {
+    width: 200px; height: 200px;
+    background: rgba(139, 92, 246, 0.1);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+    padding: 0 60px;
+  }
+
+  .title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #E6EDF3;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: #7D8590;
+    margin-bottom: 50px;
+    font-weight: 400;
+  }
+
+  .stack-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .connector {
+    color: #30363D;
+    font-size: 24px;
+    font-weight: 300;
+    user-select: none;
+  }
+
+  .tech-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 18px 16px;
+    background: rgba(22, 27, 34, 0.8);
+    border: 1px solid #30363D;
+    border-radius: 16px;
+    min-width: 100px;
+    transition: all 0.2s;
+  }
+
+  .tech-card img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .tech-name {
+    font-size: 13px;
+    color: #C9D1D9;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .tier-label {
+    font-size: 11px;
+    color: #484F58;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  .tier {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .divider {
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #30363D, transparent);
+    margin: 6px 0;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid #30363D;
+    color: #7D8590;
+    background: rgba(22, 27, 34, 0.6);
+  }
+  .badge.highlight {
+    border-color: #61DAFB;
+    color: #61DAFB;
+  }
+</style>
+</head>
+<body>
+  <div class="orb orb-blue"></div>
+  <div class="orb orb-green"></div>
+  <div class="orb orb-purple"></div>
+
+  <div class="content">
+    <div class="title">Fullstack Hybrid Template</div>
+    <div class="subtitle">React 19 · FastAPI · Docker · Traefik</div>
+
+    <div class="tier">
+      <div class="tier-label">Frontend</div>
+      <div class="stack-row">
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React">
+          <span class="tech-name">React 19</span>
+        </div>
+        <div class="connector">+</div>
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript">
+          <span class="tech-name">TypeScript</span>
+        </div>
+        <div class="connector">+</div>
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" alt="Vite">
+          <span class="tech-name">Vite</span>
+        </div>
+        <div class="connector">+</div>
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg" alt="Nginx">
+          <span class="tech-name">Nginx</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tier">
+      <div class="tier-label">Backend</div>
+      <div class="stack-row">
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
+          <span class="tech-name">Python</span>
+        </div>
+        <div class="connector">+</div>
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" alt="FastAPI" style="filter: invert(1);">
+          <span class="tech-name">FastAPI</span>
+        </div>
+        <div class="connector">+</div>
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" alt="SQLite">
+          <span class="tech-name">SQLite</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tier">
+      <div class="tier-label">Infrastructure</div>
+      <div class="stack-row">
+        <div class="tech-card">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker">
+          <span class="tech-name">Docker</span>
+        </div>
+        <div class="connector">+</div>
+        <div class="tech-card">
+          <img src="https://raw.githubusercontent.com/traefik/traefik/master/webui/statics/assets/traefik.logo.png" alt="Traefik" style="width: 42px; height: 42px;">
+          <span class="tech-name">Traefik v3</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-row">
+      <span class="badge highlight">React Compiler</span>
+      <span class="badge">SQLModel</span>
+      <span class="badge">Alembic</span>
+      <span class="badge">Let's Encrypt</span>
+      <span class="badge">Zero-Trust</span>
+    </div>
+  </div>
+</body>
+</html>
