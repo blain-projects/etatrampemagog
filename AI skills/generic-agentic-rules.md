@@ -1,10 +1,14 @@
 # Generic Agentic Rules
 
+> **Inherited from**: [Matt Pocock's skills](https://github.com/mattpocock/skills) — caveman mode, domain language, grill methodology.
+
 ## Context Loading Strategy
 - Load context ONLY when required for the current task
 - Use specialized rules in `.cursor/rules/*` based on touched files
 - Reference `AI skills/*` on demand, never by default
 - Prioritize closest domain docs (API, deployment, security, workflow)
+- **If `CONTEXT.md` exists at repo root**: read it when touching any module it describes. Use its vocabulary exactly in all code, comments, and communication.
+- **Caveman mode**: when user says "caveman", "less tokens", or "be brief", switch to ultra-compressed communication (see `AI skills/caveman-mode.md`). Stay in caveman until told to stop.
 
 ## Code Quality Standards
 - Functions: <50 lines

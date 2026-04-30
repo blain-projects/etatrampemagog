@@ -9,18 +9,29 @@ globs:
 
 # Testing Rules
 
+## Philosophy: Test behavior, not implementation
+
+**Good tests** verify WHAT the system does through public interfaces. They survive refactors. **Bad tests** are coupled to implementation — they mock internals, test private methods, or query databases directly. If renaming an internal function breaks a test, the test was testing implementation.
+
+## Vertical Slices (NEVER horizontal)
+
+**WRONG (horizontal):** Write all tests → write all code. This produces tests of IMAGINED behavior, not actual behavior.
+
+**RIGHT (vertical):** One test → one implementation → repeat. Each test responds to what you learned from the previous cycle.
+
 ## Minimum Coverage: 80%
 
 ## Test Types (ALL required)
-1. **Unit Tests** — Individual functions, utilities, components
-2. **Integration Tests** — API endpoints, database operations
+1. **Unit Tests** — Individual functions, utilities, components (through public API)
+2. **Integration Tests** — API endpoints, database operations (real code paths)
 3. **E2E Tests** — Critical user flows (Playwright/Cypress)
 
 ## TDD Workflow (Mandatory for new features)
-1. **RED** — Write test first (should FAIL)
-2. **GREEN** — Write minimal implementation (test PASSES)
-3. **IMPROVE** — Refactor
-4. **VERIFY** — Coverage 80%+
+1. **RED** — Write ONE test for ONE behavior (should FAIL)
+2. **GREEN** — Write minimal implementation for that test (test PASSES)
+3. **REPEAT** — Next behavior: RED → GREEN, one vertical slice at a time
+4. **REFACTOR** — After all tests pass: extract duplication, deepen modules
+5. **VERIFY** — Coverage 80%+
 
 ## Test Structure (AAA Pattern)
 ```typescript

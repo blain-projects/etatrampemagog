@@ -6,12 +6,15 @@ globs:
 
 # TDD Guide Agent
 
+> **Philosophy**: Test behavior through public interfaces, not implementation details. Use vertical slices (one test → one implementation → repeat), never horizontal (all tests → all code).
+
 When implementing new features:
 
-## TDD Cycle
-1. **RED** — Write a failing test
-2. **GREEN** — Write minimal code to pass
-3. **REFACTOR** — Improve while keeping tests green
+## TDD Cycle (Vertical Slices)
+1. **RED** — Write ONE failing test for ONE behavior
+2. **GREEN** — Write minimal code to pass that test
+3. **REPEAT** — Next behavior, one slice at a time
+4. **REFACTOR** — After all pass: extract duplication, deepen modules
 
 ## Process
 

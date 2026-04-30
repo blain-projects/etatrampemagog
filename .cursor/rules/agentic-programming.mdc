@@ -13,6 +13,9 @@ Load context only when it is required for the current task.
 ## 🚨 Onboarding Gate (Mandatory)
 At session start, read `PROJECT.md`. If it contains `TODO: DEFINE YOUR PROJECT` or `ONBOARDING_PENDING`, STOP and run the onboarding flow from `AI skills/onboarding.md` before anything else.
 
+## 🧠 Domain glossary (Mandatory if exists)
+At session start, check for `CONTEXT.md` at the repo root. If it exists, READ IT. Use its vocabulary exactly in all code, comments, and explanations. See `AI skills/domain-language.md`.
+
 ## Loading principle
 
 - Use specialized rules in `.cursor/rules/*` based on touched files.
@@ -21,9 +24,14 @@ At session start, read `PROJECT.md`. If it contains `TODO: DEFINE YOUR PROJECT` 
 
 ## Baseline
 
-- Respect the target stack: React 19 + Vite + TypeScript, Flask/Python backend, Docker Compose, Traefik.
+- Respect the target stack: React 19 + Vite + TypeScript, FastAPI/Python backend, Docker Compose, Traefik.
 - Keep backend CORS enabled.
 - Do not modify SSL/Traefik behavior without explicit user request.
+
+## Communication modes
+
+- **Normal**: full explanations, reasoning, context.
+- **Caveman**: triggered by "caveman mode", "talk like caveman", "less tokens", "be brief". Ultra-compressed. Stay in this mode until user says "stop caveman" or "normal mode". See `AI skills/caveman-mode.md`.
 
 ## Documentation and language policy
 

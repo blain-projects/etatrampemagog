@@ -1,13 +1,18 @@
 # Recommended Development Workflow
 
-## 0) Research & Reuse (Mandatory Before Implementation)
+> **Philosophy**: Skills don't produce good code by magic. The METHOD matters — alignment before coding, small feedback loops, and systematic verification. See `how_to_use_repo.md` for the full methodology guide.
+
+## 0) Align (Mandatory Before Non-Trivial Changes) ⭐
+- **Grill the plan**: For features affecting >1 module, say "grill me" to trigger an alignment interview. The agent will challenge your plan, sharpen terminology, and update `CONTEXT.md` if it exists.
+- **Read the glossary**: If `CONTEXT.md` exists at the repo root, read it — or ask the agent to. This saves thousands of tokens over the project's life.
 - Search existing codebase for similar implementations
 - Check if a library/package already solves the problem
 - Prefer battle-tested solutions over hand-rolled code
 
 ## 1) Before Coding
 - Read `project-context.md` and `deployment-architecture.md`
-- Identify impacted endpoints and components
+- Identify impacted endpoints, components, and modules
+- Check `CONTEXT.md` for the right vocabulary to use
 - Clarify local and production impact
 - Create implementation plan
 
@@ -31,8 +36,8 @@ npm run lint     # ESLint check
 ### Backend
 ```bash
 cd backend
-python app.py    # Or: flask run
-# Check: GET http://localhost:5000/api/health
+uvicorn app:app --reload
+# Check: GET http://localhost:8000/api/health
 ```
 
 ### Full Stack (Docker)
