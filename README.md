@@ -124,4 +124,16 @@ Le frontend utilise toujours l'URL publique. Les services Docker communiquent en
 - [`how_to_use_repo.md`](how_to_use_repo.md) — Guide méthodologique complet (skills, workflow, anti-patterns)
 - [`AI skills/README.md`](AI skills/README.md) — Index des skills disponibles
 - [`NETWORK.md`](NETWORK.md) — Architecture réseau Traefik + Nginx
-- [Matt Pocock's skills](https://github.com/mattpocock/skills) — Source originale des skills méthodologiques
+
+---
+
+## 🙏 Acknowledgements
+
+Ce template est construit sur le travail de la communauté open-source :
+
+| Projet | Contribution | Lien |
+|--------|-------------|------|
+| **Everything Claude Code (ECC)** | Skills, agents, rules, TDD workflow, security patterns, Docker patterns — le cœur de l'intégration agent du template | [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) |
+| **Matt Pocock's Skills** | Méthodologie de développement agent : grill sessions, diagnose loop, caveman mode, domain language (CONTEXT.md), TDD vertical slices | [mattpocock/skills](https://github.com/mattpocock/skills) |
+
+Les skills dans `AI skills/ecc-skills/` sont adaptés d'ECC. Les skills méthodologiques (`grill-session.md`, `diagnose.md`, `caveman-mode.md`, `domain-language.md`) sont adaptés de Matt Pocock. Les deux sont fusionnés avec l'approche ReAct et les conventions Docker/Traefik propres à ce template.
