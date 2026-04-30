@@ -109,16 +109,6 @@ Le frontend utilise toujours l'URL publique. Les services Docker communiquent en
 
 ---
 
-## ⚠️ Notes Techniques
-
-- **React Compiler** : pas besoin de `useMemo`/`useCallback` — le compiler gère.
-- **Containers éphémères** : utilise des volumes pour la persistence.
-- **CORS** : configuré via `CORSMiddleware` — ne jamais le désactiver.
-- **Secrets** : variables d'environnement uniquement, jamais en dur.
-- **Réseau** : lire `NETWORK.md` pour le dual-router pattern (Traefik + Nginx).
-
----
-
 ## 📚 Documentation
 
 - [`how_to_use_repo.md`](how_to_use_repo.md) — Guide méthodologique complet (skills, workflow, anti-patterns)
