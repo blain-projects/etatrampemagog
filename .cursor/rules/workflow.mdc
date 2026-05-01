@@ -44,7 +44,7 @@ npm run lint     # ESLint check
 **Backend:**
 ```bash
 cd backend
-python app.py    # Or: flask run
+uvicorn app:app --reload
 # Check: GET /api/health
 ```
 

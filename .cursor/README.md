@@ -10,7 +10,7 @@ Cursor automatically loads rules based on the files you're editing:
 |------|---------|---------|
 | `agentic-programming.mdc` | All files | Global context loading strategy |
 | `typescript-react.mdc` | `frontend/**/*.{ts,tsx}` | React 19 + TypeScript + Vite standards |
-| `python-flask.mdc` | `backend/**/*.py` | Python + Flask standards |
+| `python-fastapi.mdc` | `backend/**/*.py` | Python + FastAPI standards |
 | `api-context.mdc` | `backend/**/*.py`, `frontend/src/**/*` | API endpoint guidelines |
 | `deployment-context.mdc` | Docker, env files | Infrastructure constraints |
 | `security.mdc` | All files | Security checks |
