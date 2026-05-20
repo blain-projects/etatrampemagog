@@ -66,7 +66,6 @@ function App() {
         <div className="brand-row">
           <Anchor className="brand-icon" aria-hidden="true" />
           <div>
-            <p className="eyebrow">Ville de Magog</p>
             <h1 className="title">Rampe de mise à l&apos;eau</h1>
           </div>
         </div>
