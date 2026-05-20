@@ -137,7 +137,10 @@ function App() {
             {status === 'closed' && rampStatus.reopening_date_display && (
               <div className="reopen-block">
                 <span className="reopen-label">Réouverture prévue</span>
-                <span className="reopen-date">{rampStatus.reopening_date_display}</span>
+                <span className="reopen-date">
+                  {rampStatus.reopening_date_display}
+                  {rampStatus.reopening_time && ` à ${rampStatus.reopening_time}`}
+                </span>
               </div>
             )}
 
