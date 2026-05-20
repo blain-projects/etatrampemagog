@@ -12,21 +12,19 @@ from services.ramp_status import RampStatusResponse, fetch_ramp_status
 class Settings(BaseSettings):
     project_name: str = "unknown"
     domain_name: str = "blain-projects.ca"
-    # Provide default allowed origins for local dev
-    backend_cors_origins: List[str] = ["http://localhost", "http://localhost:5173"]
-
-    @field_validator("backend_cors_origins", mode="before")
-    @classmethod
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        return v
 
     model_config = SettingsConfigDict(
         env_file="../.env",  # point to the parent dir if starting from /backend
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
+
+def get_cors_origins() -> List[str]:
+    """Get CORS origins from environment variable."""
+    import os
+    cors_env = os.getenv("BACKEND_CORS_ORIGINS", "http://localhost,http://localhost:5173")
+    return [origin.strip() for origin in cors_env.split(",")]
 
 
 settings = Settings()
@@ -41,7 +39,7 @@ app = FastAPI(
 # Apply CORS config specifically with allow_credentials=True as requested
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.backend_cors_origins,
+    allow_origins=get_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

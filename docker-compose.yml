@@ -67,6 +67,8 @@ services:
       - web_network
     volumes:
       - backend_sqlite_data:/app/data
+    environment:
+      - BACKEND_CORS_ORIGINS=https://${PROJECT_NAME}.${DOMAIN_NAME},http://localhost:5173,http://localhost
     # NO "ports:" — same reasoning as frontend.
     labels:
       - "traefik.enable=true"
