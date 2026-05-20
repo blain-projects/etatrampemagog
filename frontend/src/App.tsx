@@ -138,8 +138,8 @@ function App() {
               <div className="reopen-block">
                 <span className="reopen-label">Réouverture prévue</span>
                 <span className="reopen-date">
-                  {rampStatus.reopening_date_display}
-                  {rampStatus.reopening_time && ` à ${rampStatus.reopening_time}`}
+                  {rampStatus.reopening_date_display.replace(/,\s*\d+\s*h.*$/, '')}
+                  {rampStatus.reopening_time && ` à ${parseInt(rampStatus.reopening_time.split(':')[0])}h`}
                 </span>
               </div>
             )}

@@ -158,7 +158,7 @@ def _extract_reopening_date(excerpt: str) -> tuple[str | None, str | None, str |
 
         groups = match.groups()
         
-        # Determine if this pattern has time (5 groups) or not (3 groups)
+        # Determine if this pattern has time (5 groups with hour) or not (3 groups)
         if len(groups) >= 5 and groups[3] is not None:
             # Pattern with time: day, month, year, hour, minute
             day, month_name, year, hour, minute = groups[0], groups[1], groups[2], groups[3], groups[4]
@@ -169,17 +169,13 @@ def _extract_reopening_date(excerpt: str) -> tuple[str | None, str | None, str |
             try:
                 hour_int = int(hour)
                 minute_int = int(minute) if minute else 0
-                from datetime import time as dt_time
                 parsed = parsed.replace(hour=hour_int, minute=minute_int)
             except ValueError:
                 pass
             iso_date = parsed.date().isoformat()
             month_display = month_name if not month_name.isdigit() else _month_name_fr(parsed.month)
-            time_display = f"{int(hour)} h"
-            if minute and int(minute) > 0:
-                time_display += f" {int(minute):02d}"
-            display = f"{int(day)} {month_display} {parsed.year}, {time_display}"
-            time_iso = f"{int(hour):02d}:{minute_int:02d}"
+            display = f"{int(day)} {month_display} {parsed.year}"
+            time_iso = f"{hour_int:02d}:{minute_int:02d}"
             return iso_date, display, time_iso
         else:
             # Pattern without time: day, month, year
