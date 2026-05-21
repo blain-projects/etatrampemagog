@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { AlertCircle, CheckCircle2, Loader2, RefreshCw, Ship, XCircle } from 'lucide-react'
 import { apiFetch } from './api'
 import FlowGauge from './FlowGauge'
+import { MAGOG_AVIS_URL, MAGOG_LOISIRS_RAMPE_URL } from './magogUrls'
 import type { RampStatus, RampStatusResponse } from './types/ramp'
 import './App.css'
 
@@ -174,18 +175,23 @@ function App() {
             </a>
             <a
               className="source-link"
-              href="https://www.ville.magog.qc.ca/culture-sports-communaute/loisirs/#ouverture-fermeture-rampe"
+              href={MAGOG_LOISIRS_RAMPE_URL}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Détails : Capitainerie &amp; Débit rivière
+              Page municipale : débit et rampe
             </a>
           </section>
         )}
       </main>
 
       <footer className="site-footer">
-        <span>Données : Ville de Magog — avis importants</span>
+        <span>
+          Données : Ville de Magog —{' '}
+          <a href={MAGOG_AVIS_URL} target="_blank" rel="noopener noreferrer">
+            avis importants
+          </a>
+        </span>
         <span>etatrampemagog.blain-projects.ca</span>
       </footer>
     </div>

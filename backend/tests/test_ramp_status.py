@@ -6,8 +6,10 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.ramp_status import (
+    RampStatusResponse,
     RampStatusValue,
     clear_ramp_status_cache,
+    enrich_river_flow_from_loisirs,
     parse_ramp_status_from_html,
 )
 
@@ -66,3 +68,49 @@ def test_parse_no_ramp_mention_defaults_open() -> None:
     assert result.status == RampStatusValue.OPEN
     assert result.label == "Ouverte"
     assert result.excerpt is None
+
+
+LOISIRS_TABLE_HTML = """
+<html><body>
+  <table>
+    <tr>
+      <th>Débit d'évacuation</th>
+      <th>Débit de la rivière (&le; 70 m 3 /s)</th>
+      <th>Débit de la rivière (&gt; 70 m 3 /s)</th>
+    </tr>
+    <tr>
+      <td>70 m 3 /s</td>
+      <td>Navigation autorisée</td>
+      <td>Navigation interdite</td>
+    </tr>
+  </table>
+  <h2 id="ouverture-fermeture-rampe">Ouverture et fermeture de la rampe</h2>
+</body></html>
+"""
+
+
+def test_enrich_river_flow_from_loisirs_table_when_missing() -> None:
+    payload = RampStatusResponse(
+        status=RampStatusValue.OPEN,
+        label="Ouverte",
+        source_url="https://example.test/avis",
+        fetched_at=parse_ramp_status_from_html(OPEN_HTML).fetched_at,
+    )
+
+    enriched = enrich_river_flow_from_loisirs(payload, LOISIRS_TABLE_HTML)
+
+    assert enriched.river_flow == "70 m3/s"
+
+
+def test_enrich_keeps_existing_river_flow() -> None:
+    payload = RampStatusResponse(
+        status=RampStatusValue.OPEN,
+        label="Ouverte",
+        river_flow="42 m3/s",
+        source_url="https://example.test/avis",
+        fetched_at=parse_ramp_status_from_html(OPEN_HTML).fetched_at,
+    )
+
+    enriched = enrich_river_flow_from_loisirs(payload, LOISIRS_TABLE_HTML)
+
+    assert enriched.river_flow == "42 m3/s"

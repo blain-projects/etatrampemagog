@@ -205,7 +205,8 @@ export default function FlowGauge({ riverFlow }: FlowGaugeProps) {
         <span className="flow-status-dot" />
         {!hasData ? (
           <span>
-            Seuil de fermeture : <strong>{THRESHOLD} m³/s</strong> — Débit en temps réel non disponible
+            Seuil de fermeture : <strong>{THRESHOLD} m³/s</strong> — débit non disponible
+            (voir la page municipale)
           </span>
         ) : isDanger ? (
           <span>

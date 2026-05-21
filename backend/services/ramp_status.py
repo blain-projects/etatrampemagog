@@ -15,7 +15,18 @@ from pydantic import BaseModel, Field
 MAGOG_AVIS_URL: Final[str] = (
     "https://www.ville.magog.qc.ca/informations-services/avis-important/"
 )
+MAGOG_LOISIRS_RAMPE_URL: Final[str] = (
+    "https://www.ville.magog.qc.ca/culture-sports-communaute/loisirs/"
+    "#ouverture-fermeture-rampe"
+)
+MAGOG_LOISIRS_PAGE_URL: Final[str] = (
+    "https://www.ville.magog.qc.ca/culture-sports-communaute/loisirs/"
+)
 CACHE_TTL_SECONDS: Final[int] = 300
+FLOW_M3S_RE: Final[re.Pattern[str]] = re.compile(
+    r"(\d+)\s*m\s*3\s*/\s*s",
+    re.IGNORECASE,
+)
 USER_AGENT: Final[str] = "RampeMagogEtat/1.0 (+https://etatrampemagog.blain-projects.ca)"
 
 FRENCH_MONTHS: Final[dict[str, int]] = {
@@ -89,6 +100,71 @@ def _strip_html(html: str) -> str:
     normalized = unescape(without_tags)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized.strip()
+
+
+def _format_flow_m3s(value: int) -> str:
+    return f"{value} m3/s"
+
+
+def _parse_flow_m3s(text: str) -> str | None:
+    match = FLOW_M3S_RE.search(text)
+    if not match:
+        return None
+    return _format_flow_m3s(int(match.group(1)))
+
+
+def _extract_live_flow_from_loisirs_text(text: str) -> str | None:
+    """Prefer an explicit 'débit de la rivière' reading when present on the page."""
+    match = re.search(
+        r"débit\s+de\s+la\s+rivière[^0-9]{0,80}?(\d+)\s*m\s*3\s*/\s*s",
+        text,
+        re.IGNORECASE,
+    )
+    if match:
+        return _format_flow_m3s(int(match.group(1)))
+    return _parse_flow_m3s(text)
+
+
+def _extract_flow_from_loisirs_table(html: str) -> str | None:
+    """Fallback: threshold table near #ouverture-fermeture-rampe (Débit d'évacuation)."""
+    anchor_idx = html.lower().find("ouverture-fermeture-rampe")
+    if anchor_idx == -1:
+        search_region = html
+    else:
+        search_region = html[max(0, anchor_idx - 8000) : anchor_idx + 2000]
+
+    for table_match in re.finditer(
+        r"<table[^>]*>.*?</table>",
+        search_region,
+        flags=re.IGNORECASE | re.DOTALL,
+    ):
+        table_text = _strip_html(table_match.group(0))
+        lowered = table_text.lower()
+        if "évacuation" not in lowered and "evacuation" not in lowered:
+            continue
+        flow = _parse_flow_m3s(table_text)
+        if flow:
+            return flow
+    return None
+
+
+def enrich_river_flow_from_loisirs(
+    payload: RampStatusResponse,
+    loisirs_html: str,
+) -> RampStatusResponse:
+    """Fill river_flow from the loisirs page when avis importants has no live reading."""
+    if payload.river_flow is not None:
+        return payload
+
+    text = _strip_html(loisirs_html)
+    flow = _extract_live_flow_from_loisirs_text(text)
+    if flow is None:
+        flow = _extract_flow_from_loisirs_table(loisirs_html)
+
+    if flow is None:
+        return payload
+
+    return payload.model_copy(update={"river_flow": flow})
 
 
 def _find_ramp_excerpt(text: str) -> str | None:
@@ -235,11 +311,9 @@ def parse_ramp_status_from_html(html: str, *, source_url: str = MAGOG_AVIS_URL) 
     river_flow = None
     ramp_info = None
 
-    # Extract river flow rate (debit de la riviere)
-    flow_match = re.search(r"débit\s+de\s+la\s+rivière\s*:?\s*(\d+)\s*m3/s", text, re.IGNORECASE)
-    if flow_match:
-        flow_rate = int(flow_match.group(1))
-        river_flow = f"{flow_rate} m3/s"
+    river_flow = _extract_live_flow_from_loisirs_text(text)
+    if river_flow:
+        flow_rate = int(FLOW_M3S_RE.search(river_flow).group(1))  # type: ignore[union-attr]
         # Determine status based on flow rate
         if flow_rate > 70:
             # High flow - closed
@@ -279,8 +353,8 @@ def parse_ramp_status_from_html(html: str, *, source_url: str = MAGOG_AVIS_URL) 
             reopening_date=iso_date,
             reopening_time=time_iso,
             reopening_date_display=display_date,
-            river_flow="100 m3/s",  # Default from loisirs page
-            ramp_info="La rampe est fermée pour le moment. Débit trop élevé (>70 m3/s).",
+            river_flow=None,  # Will be populated from loisirs page if available
+            ramp_info="La rampe est fermée pour le moment.",
             source_url=source_url,
             fetched_at=fetched_at,
             excerpt=excerpt,
@@ -327,27 +401,10 @@ async def fetch_ramp_status(*, force_refresh: bool = False) -> RampStatusRespons
         html = response.text
         payload = parse_ramp_status_from_html(html)
 
-        # Fetch loisirs page for river flow
         try:
-            loisirs_url = "https://www.ville.magog.qc.ca/culture-sports-communaute/loisirs/"
-            response2 = await client.get(loisirs_url)
+            response2 = await client.get(MAGOG_LOISIRS_PAGE_URL)
             response2.raise_for_status()
-            text2 = _strip_html(response2.text)
-            
-            # Extract river flow rate
-            flow_match = re.search(r"débit\s+de\s+la\s+rivière\s*:?\s*(\d+)\s*m3/s", text2, re.IGNORECASE)
-            if flow_match:
-                flow_rate = int(flow_match.group(1))
-                payload.river_flow = f"{flow_rate} m3/s"
-                # Update status based on flow rate
-                if flow_rate > 70 and payload.status != RampStatusValue.CLOSED:
-                    payload.status = RampStatusValue.CLOSED
-                    payload.label = "Fermée"
-                    payload.ramp_info = "Navigation interdite - Débit de la rivière trop élevé (>70 m3/s)"
-                elif flow_rate <= 70 and payload.status == RampStatusValue.UNKNOWN:
-                    payload.status = RampStatusValue.OPEN
-                    payload.label = "Ouverte"
-                    payload.ramp_info = "La rampe est accessible aux embarcations."
+            payload = enrich_river_flow_from_loisirs(payload, response2.text)
         except Exception as e:
             print(f"Failed to fetch loisirs page: {e}")
 
