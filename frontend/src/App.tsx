@@ -165,22 +165,24 @@ function App() {
             <p className="meta">
               Dernière mise à jour : {formatFetchedAt(rampStatus.fetched_at)}
             </p>
-            <a
-              className="source-link"
-              href={rampStatus.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Voir l&apos;avis officiel
-            </a>
-            <a
-              className="source-link"
-              href={MAGOG_LOISIRS_RAMPE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Page municipale : débit et rampe
-            </a>
+            <div className="source-links">
+              <a
+                className="source-link"
+                href={rampStatus.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Voir l&apos;avis officiel
+              </a>
+              <a
+                className="source-link"
+                href={MAGOG_LOISIRS_RAMPE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Page municipale : débit et rampe
+              </a>
+            </div>
           </section>
         )}
       </main>

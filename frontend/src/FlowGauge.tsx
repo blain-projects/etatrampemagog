@@ -1,14 +1,19 @@
-import { useMemo } from 'react'
+import { useId } from 'react'
 
 const THRESHOLD = 70
 const MAX_FLOW = 150
 const GAUGE_WIDTH = 600
-const GAUGE_HEIGHT = 180
+const GAUGE_HEIGHT = 208
 const PADDING_X = 60
-const PADDING_Y = 30
+const PADDING_TOP = 22
+const PADDING_BOTTOM = 42
+const BAR_TOP = 48
+const BAR_HEIGHT = GAUGE_HEIGHT - BAR_TOP - PADDING_BOTTOM
+const TRACK_FILL = '#f0f9ff'
+const WATER_FILL = '#38bdf8'
 
 interface FlowGaugeProps {
-  riverFlow: string | null // e.g. "85 m3/s" or null if unavailable
+  riverFlow: string | null
 }
 
 function parseFlow(flow: string): number {
@@ -17,31 +22,31 @@ function parseFlow(flow: string): number {
 }
 
 export default function FlowGauge({ riverFlow }: FlowGaugeProps) {
+  const uid = useId().replace(/:/g, '')
   const flow = riverFlow ? parseFlow(riverFlow) : null
   const hasData = flow !== null && flow > 0
   const isDanger = hasData && flow! > THRESHOLD
   const clampedFlow = hasData ? Math.min(flow!, MAX_FLOW) : 0
 
-  // Map flow to water height (0 to 100% of water area)
   const waterAreaWidth = GAUGE_WIDTH - PADDING_X * 2
-  const waterRatio = clampedFlow / MAX_FLOW
-  const waterWidth = waterRatio * waterAreaWidth
-
-  // Color interpolation: blue(0) -> green(30) -> yellow(55) -> orange(65) -> red(70+)
-  const flowColor = useMemo(() => {
-    if (waterRatio >= 0.47) return '#ef4444' // >70 = red
-    if (waterRatio >= 0.43) return '#f97316' // 65-70 = orange
-    if (waterRatio >= 0.37) return '#eab308' // 55-65 = yellow
-    if (waterRatio >= 0.2) return '#22c55e'  // 30-55 = green
-    return '#3b82f6'                          // 0-30 = blue
-  }, [waterRatio])
+  const waterWidth = (clampedFlow / MAX_FLOW) * waterAreaWidth
 
   const thresholdX = PADDING_X + (THRESHOLD / MAX_FLOW) * waterAreaWidth
+  const tickBaseY = GAUGE_HEIGHT - PADDING_BOTTOM + 6
+  const tickLabelY = GAUGE_HEIGHT - 10
 
-  const tickMarks = [0, 20, 40, 70, 100, 130, 150]
+  const clipId = `waterClip-${uid}`
 
   return (
-    <div className="flow-gauge" role="img" aria-label={hasData ? `Débit actuel : ${riverFlow}. Seuil de fermeture : ${THRESHOLD} m³/s` : `Seuil de fermeture : ${THRESHOLD} m³/s. Données de débit non disponibles.`}>
+    <div
+      className="flow-gauge"
+      role="img"
+      aria-label={
+        hasData
+          ? `Débit actuel : ${riverFlow}. Seuil de fermeture : ${THRESHOLD} m³/s`
+          : `Seuil de fermeture : ${THRESHOLD} m³/s. Données de débit non disponibles.`
+      }
+    >
       <div className="flow-gauge-value">
         {hasData ? (
           <>
@@ -59,136 +64,85 @@ export default function FlowGauge({ riverFlow }: FlowGaugeProps) {
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id="waterGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.9" />
-            <stop offset="25%" stopColor="#22c55e" stopOpacity="0.9" />
-            <stop offset="47%" stopColor="#eab308" stopOpacity="0.9" />
-            <stop offset="65%" stopColor="#f97316" stopOpacity="0.9" />
-            <stop offset="70%" stopColor="#ef4444" stopOpacity="0.9" />
-          </linearGradient>
-          <linearGradient id="waterGradFill" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.55" />
-            <stop offset="25%" stopColor="#22c55e" stopOpacity="0.55" />
-            <stop offset="47%" stopColor="#eab308" stopOpacity="0.55" />
-            <stop offset="65%" stopColor="#f97316" stopOpacity="0.55" />
-            <stop offset="70%" stopColor="#ef4444" stopOpacity="0.55" />
-          </linearGradient>
-          <clipPath id="waterClip">
+          <clipPath id={clipId}>
             <rect
               x={PADDING_X}
-              y={PADDING_Y}
-              width={waterWidth}
-              height={GAUGE_HEIGHT - PADDING_Y * 2}
-              rx={12}
+              y={BAR_TOP}
+              width={Math.max(waterWidth, 0)}
+              height={BAR_HEIGHT}
+              rx={14}
             />
           </clipPath>
-          {/* Wave pattern */}
-          <pattern id="wavePattern" x="0" y="0" width="60" height="20" patternUnits="userSpaceOnUse">
-            <path
-              d="M0,10 Q15,0 30,10 Q45,20 60,10"
-              fill="none"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeOpacity="0.3"
-            />
-          </pattern>
         </defs>
 
-        {/* Background bar */}
         <rect
           x={PADDING_X}
-          y={PADDING_Y + 30}
+          y={BAR_TOP}
           width={waterAreaWidth}
-          height={GAUGE_HEIGHT - PADDING_Y * 2 - 30}
+          height={BAR_HEIGHT}
           rx={14}
-          fill="var(--color-surface-2)"
+          fill={TRACK_FILL}
           stroke="var(--color-border)"
           strokeWidth="1.5"
         />
 
-        {/* Filled water area with gradient */}
-        {hasData && waterWidth > 0 && (
-          <>
-            <rect
-              x={PADDING_X}
-              y={PADDING_Y + 30}
-              width={waterWidth}
-              height={GAUGE_HEIGHT - PADDING_Y * 2 - 30}
-              rx={14}
-              fill="url(#waterGradFill)"
-            />
-            {/* Wave effect inside filled area */}
-            <rect
-              x={PADDING_X}
-              y={PADDING_Y + 30}
-              width={waterWidth}
-              height={GAUGE_HEIGHT - PADDING_Y * 2 - 30}
-              rx={14}
-              fill="url(#wavePattern)"
-              className="wave-move"
-            />
-          </>
-        )}
+        {hasData && waterWidth > 0 ? (
+          <rect
+            x={PADDING_X}
+            y={BAR_TOP}
+            width={waterWidth}
+            height={BAR_HEIGHT}
+            rx={14}
+            fill={WATER_FILL}
+            clipPath={`url(#${clipId})`}
+          />
+        ) : null}
 
-        {/* Threshold line */}
         <line
           x1={thresholdX}
-          y1={PADDING_Y + 20}
+          y1={PADDING_TOP + 12}
           x2={thresholdX}
-          y2={GAUGE_HEIGHT - PADDING_Y + 10}
-          stroke="#ef4444"
-          strokeWidth="2.5"
-          strokeDasharray="6,4"
+          y2={BAR_TOP + BAR_HEIGHT - 4}
+          stroke="#1e40af"
+          strokeWidth="2"
+          strokeDasharray="5,4"
+          strokeOpacity="0.75"
         />
-        {/* Threshold flag */}
         <rect
-          x={thresholdX - 28}
-          y={PADDING_Y + 8}
-          width={56}
+          x={thresholdX - 30}
+          y={PADDING_TOP}
+          width={60}
           height={22}
           rx={6}
-          fill="#ef4444"
+          fill="#1e3a8a"
         />
         <text
           x={thresholdX}
-          y={PADDING_Y + 23}
+          y={PADDING_TOP + 15}
           textAnchor="middle"
           fill="white"
-          fontSize="12"
+          fontSize="11"
           fontWeight="700"
           fontFamily="var(--font-sans)"
         >
           {THRESHOLD} SEUIL
         </text>
 
-        {/* Current value indicator dot */}
-        {hasData && waterWidth > 2 && (
-          <circle
-            cx={PADDING_X + waterWidth}
-            cy={PADDING_Y + 30 + (GAUGE_HEIGHT - PADDING_Y * 2 - 30) / 2}
-            r={7}
-            fill={flowColor}
-            stroke="white"
-            strokeWidth="3"
-          />
-        )}
-
-        {/* Tick marks */}
-        {tickMarks.map((tick) => {
+        {[0, 20, 40, 70, 100, 130, 150].map((tick) => {
           const x = PADDING_X + (tick / MAX_FLOW) * waterAreaWidth
           return (
             <g key={tick}>
               <line
                 x1={x}
-                y1={GAUGE_HEIGHT - PADDING_Y + 10}
+                y1={tickBaseY}
                 x2={x}
-                y2={GAUGE_HEIGHT - PADDING_Y + 18}
+                y2={tickBaseY + 7}
                 stroke="var(--color-text-muted)"
                 strokeWidth="1"
               />
               <text
                 x={x}
-                y={GAUGE_HEIGHT - PADDING_Y + 32}
+                y={tickLabelY}
                 textAnchor="middle"
                 fill="var(--color-text-muted)"
                 fontSize="11"
