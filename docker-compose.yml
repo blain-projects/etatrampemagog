@@ -8,6 +8,7 @@
 # ENVIRONMENT VARIABLES (auto-injected by deploy.sh into .env):
 #   PROJECT_NAME  — used in container names, Traefik router names, subdomain
 #   DOMAIN_NAME   — always "blain-projects.ca"
+#   NODE_AUTH_TOKEN — GitHub Packages token to install @blain-projects/ui
 #
 # RESULTING URLs:
 #   Frontend → https://${PROJECT_NAME}.blain-projects.ca
@@ -24,7 +25,12 @@ services:
 
   # ── Frontend (React 19 / Nginx) ──────────────────────────────────────────
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        # Jeton d'accès GitHub Packages pour installer @blain-projects/ui.
+        # Vide par défaut — fourni par l'environnement de build/CI.
+        NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-}
     container_name: ${PROJECT_NAME}-front
     restart: unless-stopped
     networks:

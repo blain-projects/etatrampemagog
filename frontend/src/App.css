@@ -1,214 +1,20 @@
-.app-shell {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--space-6) var(--space-4) var(--space-8);
-}
-
-.site-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-
-.brand-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.brand-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: var(--color-steel-600);
-  flex-shrink: 0;
-}
-
-.eyebrow {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.title {
-  margin: var(--space-1) 0 0;
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.subtitle {
-  margin: var(--space-1) 0 0;
-  font-size: 0.95rem;
-  color: var(--color-text-muted);
-}
-
-.refresh-btn,
-.retry-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
-}
-
-.refresh-btn:hover:not(:disabled),
-.retry-btn:hover {
-  border-color: var(--color-steel-500);
-  background: var(--color-surface-2);
-}
-
-.refresh-btn:focus-visible,
-.retry-btn:focus-visible,
-.source-link:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-
-.refresh-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.status-panel-wrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.status-card {
-  width: 100%;
-  padding: var(--space-8) var(--space-6);
-  border-radius: var(--radius-lg);
-  border: 2px solid var(--color-border);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-md);
-  text-align: center;
-}
-
-.status-card-loading,
-.status-card-error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  color: var(--color-text-muted);
-}
-
-.status-card-error {
-  border-color: color-mix(in srgb, var(--color-danger) 40%, var(--color-border));
-}
-
-.status-open {
-  border-color: color-mix(in srgb, var(--color-success) 55%, var(--color-border));
-  background: color-mix(in srgb, var(--color-success) 8%, var(--color-surface));
-}
-
-.status-closed {
-  border-color: color-mix(in srgb, var(--color-danger) 55%, var(--color-border));
-  background: color-mix(in srgb, var(--color-danger) 8%, var(--color-surface));
-}
-
-.status-unknown {
-  border-color: color-mix(in srgb, var(--color-warning) 50%, var(--color-border));
-  background: color-mix(in srgb, var(--color-warning) 8%, var(--color-surface));
-}
-
-.status-icon-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--space-4);
-}
-
-.status-icon {
-  width: 4.5rem;
-  height: 4.5rem;
-}
-
-.status-open .status-icon {
-  color: var(--color-success);
-}
-
-.status-closed .status-icon {
-  color: var(--color-danger);
-}
-
-.status-unknown .status-icon {
-  color: var(--color-warning);
-}
-
-.status-label {
-  margin: 0;
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.status-open .status-label {
-  color: var(--color-success);
-}
-
-.status-closed .status-label {
-  color: var(--color-danger);
-}
-
-.status-hint {
-  margin: var(--space-3) 0 0;
-  color: var(--color-text-muted);
-  font-size: 1.05rem;
-}
-
-.reopen-block {
-  margin-top: var(--space-6);
-  padding: var(--space-4) var(--space-6);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-danger) 12%, var(--color-surface));
-  border: 1px solid color-mix(in srgb, var(--color-danger) 30%, transparent);
-}
-
-.reopen-label {
-  display: block;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-muted);
-}
-
-.reopen-date {
-  display: block;
-  margin-top: var(--space-2);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.reopen-unknown {
-  margin-top: var(--space-4);
-  font-size: 0.95rem;
-  color: var(--color-text-muted);
-}
+/* App.css — styles app-spécifiques restants après migration vers
+   @blain-projects/ui. Le thème "Steel Signature" et les styles de
+   carte de statut (.status-card, .app-shell, etc.) ont été retirés :
+   ils sont désormais rendus par les composants du design system.
+   On ne garde QUE la jauge de débit (FlowGauge), qui n'a pas
+   d'équivalent dans le design system, et l'animation spin. Les
+   références aux tokens locaux Steel sont remappées sur les tokens
+   --bui-* du design system. */
 
 /* ── Flow Gauge (jauge de débit) ─── */
 
 .flow-gauge {
-  margin-top: var(--space-6);
-  padding: var(--space-6) var(--space-4) var(--space-4);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  margin-top: 24px;
+  padding: 24px 16px 16px;
+  border-radius: var(--bui-r-lg);
+  background: var(--bui-surface);
+  border: 1px solid var(--bui-border);
   text-align: center;
 }
 
@@ -216,21 +22,22 @@
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .flow-number {
+  font-family: var(--bui-font-display);
   font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: var(--color-text);
+  color: var(--bui-text);
 }
 
 .flow-unit {
   font-size: 1.1rem;
-  color: var(--color-text-muted);
+  color: var(--bui-muted);
   font-weight: 500;
 }
 
@@ -292,22 +99,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-sm);
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 20px;
+  border-radius: var(--bui-r-sm);
+  font-family: var(--bui-font-body);
   font-size: 0.95rem;
   font-weight: 500;
 }
 
 .flow-status.safe {
-  background: color-mix(in srgb, var(--color-success) 10%, var(--color-surface));
-  color: var(--color-success);
+  background: color-mix(in srgb, var(--bui-success) 12%, var(--bui-surface));
+  color: var(--bui-success);
 }
 
 .flow-status.danger {
-  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
-  color: var(--color-danger);
+  background: color-mix(in srgb, var(--bui-danger) 12%, var(--bui-surface));
+  color: var(--bui-danger);
 }
 
 .flow-status-dot {
@@ -318,26 +126,26 @@
 }
 
 .flow-status.safe .flow-status-dot {
-  background: var(--color-success);
+  background: var(--bui-success);
 }
 
 .flow-status.danger .flow-status-dot {
-  background: var(--color-danger);
+  background: var(--bui-danger);
   animation: pulse-dot 2s infinite;
 }
 
 .flow-status.nodata .flow-status-dot {
-  background: var(--color-warning);
+  background: var(--bui-warning);
 }
 
 .flow-status.nodata {
-  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-surface));
-  color: var(--color-warning);
+  background: color-mix(in srgb, var(--bui-warning) 12%, var(--bui-surface));
+  color: var(--bui-warning);
 }
 
 .flow-no-data {
   font-size: 1rem;
-  color: var(--color-text-muted);
+  color: var(--bui-muted);
   font-style: italic;
 }
 
@@ -346,52 +154,7 @@
   50% { opacity: 0.4; }
 }
 
-.ramp-info {
-  margin-top: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-steel-500) 8%, var(--color-surface));
-  border: 1px solid color-mix(in srgb, var(--color-steel-500) 25%, transparent);
-  font-size: 0.95rem;
-  color: var(--color-text);
-}
-
-.meta {
-  margin: var(--space-6) 0 var(--space-3);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-}
-
-.source-links {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-
-.source-link {
-  display: block;
-  font-size: 0.95rem;
-  color: var(--color-steel-600);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.source-link:hover {
-  color: var(--color-steel-500);
-}
-
-.site-footer {
-  margin-top: var(--space-8);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  text-align: center;
-}
-
+/* Icône d'actualisation en rotation */
 .spin {
   animation: spin 0.9s linear infinite;
 }
