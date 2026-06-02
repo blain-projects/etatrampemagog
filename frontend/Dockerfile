@@ -1,8 +1,19 @@
 # Étape 1 : Construction (Build)
 FROM node:20-alpine as builder
 WORKDIR /app
+
+# Jeton d'accès au registre GitHub Packages pour @blain-projects/ui.
+# Fourni au build via --build-arg NODE_AUTH_TOKEN=... (voir docker-compose.yml).
+ARG NODE_AUTH_TOKEN
+
 COPY package*.json ./
-RUN npm install
+
+# .npmrc éphémère : authentifie le scope @blain-projects sur GitHub Packages
+# le temps du npm install, puis est supprimé pour ne pas fuiter dans l'image.
+RUN printf "@blain-projects:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\nalways-auth=true\n" "$NODE_AUTH_TOKEN" > .npmrc \
+    && npm install \
+    && rm -f .npmrc
+
 COPY . .
 RUN npm run build
 

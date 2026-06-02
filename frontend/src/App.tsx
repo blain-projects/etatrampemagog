@@ -1,5 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AlertCircle, CheckCircle2, Loader2, RefreshCw, Ship, XCircle } from 'lucide-react'
+import {
+  Badge,
+  BlueprintBackground,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Display,
+  Heading,
+  MonoLabel,
+  Text,
+} from '@blain-projects/ui'
 import { apiFetch } from './api'
 import FlowGauge from './FlowGauge'
 import { MAGOG_AVIS_URL, MAGOG_LOISIRS_RAMPE_URL } from './magogUrls'
@@ -17,6 +29,14 @@ function formatFetchedAt(iso: string): string {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(date)
+}
+
+type BadgeTone = 'ok' | 'danger' | 'warn'
+
+function statusTone(status: RampStatus): BadgeTone {
+  if (status === 'open') return 'ok'
+  if (status === 'closed') return 'danger'
+  return 'warn'
 }
 
 function StatusIcon({ status }: { status: RampStatus }) {
@@ -86,122 +106,150 @@ function App() {
   const isRefreshing = loadState === 'loading' && rampStatus !== null
 
   return (
-    <div className="app-shell">
-      <header className="site-header">
-        <div className="brand-row">
-          <Ship className="brand-icon" aria-hidden="true" />
-          <div>
-            <h1 className="title">Rampe de mise à l&apos;eau</h1>
-            <p className="subtitle">Rampe de la capitainerie — Magog</p>
+    <>
+      <BlueprintBackground />
+      <div className="mx-auto flex min-h-screen max-w-[720px] flex-col px-4 py-8">
+        <header className="mb-8 flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Ship className="h-10 w-10 flex-shrink-0 text-[var(--bui-blue-strong)]" aria-hidden="true" />
+            <div>
+              <Heading level={1}>Rampe de mise à l&apos;eau</Heading>
+              <Text className="text-[var(--bui-muted)]">Rampe de la capitainerie — Magog</Text>
+            </div>
           </div>
-        </div>
-        <button
-          type="button"
-          className="refresh-btn"
-          onClick={handleRefresh}
-          disabled={loadState === 'loading' || isButtonDisabledTimer}
-          aria-busy={loadState === 'loading'}
-        >
-          <RefreshCw className={isRefreshing ? 'spin' : undefined} aria-hidden="true" />
-          Actualiser
-        </button>
-      </header>
-
-      <main className="status-panel-wrap">
-        {loadState === 'loading' && rampStatus === null && (
-          <section className="status-card status-card-loading" aria-live="polite">
-            <Loader2 className="status-icon spin" aria-hidden="true" />
-            <p>Chargement du statut…</p>
-          </section>
-        )}
-
-        {loadState === 'error' && (
-          <section className="status-card status-card-error" role="alert">
-            <AlertCircle className="status-icon" aria-hidden="true" />
-            <p>{errorMessage}</p>
-            <button type="button" className="retry-btn" onClick={() => void loadStatus()}>
-              Réessayer
-            </button>
-          </section>
-        )}
-
-        {rampStatus && loadState !== 'error' && (
-          <section
-            className={`status-card status-${status}`}
-            aria-live="polite"
-            aria-label={`Statut : ${rampStatus.label}`}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={loadState === 'loading' || isButtonDisabledTimer}
+            aria-busy={loadState === 'loading'}
           >
-            <div className="status-icon-wrap">
-              <StatusIcon status={status} />
-            </div>
-            <p className="status-label">{rampStatus.label}</p>
-            <p className="status-hint">
-              {status === 'open' && 'La rampe est accessible aux embarcations.'}
-              {status === 'closed' && 'La rampe est fermée pour le moment.'}
-              {status === 'unknown' &&
-                'Le statut n’a pas pu être déterminé clairement à partir des avis municipaux.'}
-            </p>
+            <RefreshCw className={isRefreshing ? 'spin' : undefined} aria-hidden="true" />
+            Actualiser
+          </Button>
+        </header>
 
-            {status === 'closed' && rampStatus.reopening_date_display && (
-              <div className="reopen-block">
-                <span className="reopen-label">Réouverture prévue</span>
-                <span className="reopen-date">
-                  {rampStatus.reopening_date_display.replace(/,\s*\d+\s*h.*$/, '')}
-                  {rampStatus.reopening_time && ` à ${parseInt(rampStatus.reopening_time.split(':')[0])}h`}
-                </span>
-              </div>
-            )}
+        <main className="flex flex-1 items-center justify-center">
+          {loadState === 'loading' && rampStatus === null && (
+            <Card corners className="w-full">
+              <CardBody>
+                <div className="flex flex-col items-center gap-4 text-center" aria-live="polite">
+                  <Loader2 className="status-icon spin text-[var(--bui-muted)]" aria-hidden="true" />
+                  <Text className="text-[var(--bui-muted)]">Chargement du statut…</Text>
+                </div>
+              </CardBody>
+            </Card>
+          )}
 
-            {rampStatus?.ramp_info && status !== 'open' && (
-              <p className="ramp-info">
-                {rampStatus.ramp_info}
-              </p>
-            )}
+          {loadState === 'error' && (
+            <Card corners className="w-full">
+              <CardBody>
+                <div className="flex flex-col items-center gap-4 text-center" role="alert">
+                  <AlertCircle className="status-icon text-[var(--bui-danger)]" aria-hidden="true" />
+                  <Text>{errorMessage}</Text>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => void loadStatus()}>
+                    Réessayer
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          )}
 
-            {/* Flow gauge visual — always show, even without data */}
-            <FlowGauge riverFlow={rampStatus?.river_flow ?? null} />
+          {rampStatus && loadState !== 'error' && (
+            <Card
+              corners
+              className="w-full"
+              aria-live="polite"
+              aria-label={`Statut : ${rampStatus.label}`}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-center">
+                  <Badge tone={statusTone(status)}>
+                    {status === 'open' && 'EN DIRECT'}
+                    {status === 'closed' && 'FERMÉE'}
+                    {status === 'unknown' && 'INDÉTERMINÉ'}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="flex flex-col items-center text-center">
+                  <StatusIcon status={status} />
+                  <Display className="mt-4">{rampStatus.label}</Display>
+                  <Text className="mt-3 text-[var(--bui-muted)]">
+                    {status === 'open' && 'La rampe est accessible aux embarcations.'}
+                    {status === 'closed' && 'La rampe est fermée pour le moment.'}
+                    {status === 'unknown' &&
+                      'Le statut n’a pas pu être déterminé clairement à partir des avis municipaux.'}
+                  </Text>
 
-            {status === 'closed' && !rampStatus.reopening_date_display && (
-              <p className="reopen-unknown">
-                Date de réouverture non précisée sur le site municipal.
-              </p>
-            )}
+                  {status === 'closed' && rampStatus.reopening_date_display && (
+                    <div className="mt-6 w-full rounded-[var(--bui-r-md)] border border-[color-mix(in_srgb,var(--bui-danger)_30%,transparent)] bg-[color-mix(in_srgb,var(--bui-danger)_12%,var(--bui-surface))] px-6 py-4">
+                      <MonoLabel className="block uppercase">Réouverture prévue</MonoLabel>
+                      <span className="mt-2 block text-2xl font-bold text-[var(--bui-text)]">
+                        {rampStatus.reopening_date_display.replace(/,\s*\d+\s*h.*$/, '')}
+                        {rampStatus.reopening_time && ` à ${parseInt(rampStatus.reopening_time.split(':')[0])}h`}
+                      </span>
+                    </div>
+                  )}
 
-            <p className="meta">
-              Dernière mise à jour : {formatFetchedAt(rampStatus.fetched_at)}
-            </p>
-            <div className="source-links">
-              <a
-                className="source-link"
-                href={rampStatus.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Voir l&apos;avis officiel
-              </a>
-              <a
-                className="source-link"
-                href={MAGOG_LOISIRS_RAMPE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Page municipale : débit et rampe
-              </a>
-            </div>
-          </section>
-        )}
-      </main>
+                  {rampStatus?.ramp_info && status !== 'open' && (
+                    <Text className="mt-4 w-full rounded-[var(--bui-r-md)] border border-[color-mix(in_srgb,var(--bui-blue)_25%,transparent)] bg-[color-mix(in_srgb,var(--bui-blue)_8%,var(--bui-surface))] px-4 py-3">
+                      {rampStatus.ramp_info}
+                    </Text>
+                  )}
 
-      <footer className="site-footer">
-        <span>
-          Données : Ville de Magog —{' '}
-          <a href={MAGOG_AVIS_URL} target="_blank" rel="noopener noreferrer">
-            avis importants
-          </a>
-        </span>
-        <span>etatrampemagog.blain-projects.ca</span>
-      </footer>
-    </div>
+                  {/* Flow gauge visual — always show, even without data */}
+                  <div className="w-full">
+                    <FlowGauge riverFlow={rampStatus?.river_flow ?? null} />
+                  </div>
+
+                  {status === 'closed' && !rampStatus.reopening_date_display && (
+                    <Text className="mt-4 text-[var(--bui-muted)]">
+                      Date de réouverture non précisée sur le site municipal.
+                    </Text>
+                  )}
+
+                  <MonoLabel className="mt-6 mb-3 block">
+                    Dernière mise à jour : {formatFetchedAt(rampStatus.fetched_at)}
+                  </MonoLabel>
+                  <div className="mt-2 flex flex-col items-center gap-3">
+                    <Button asChild variant="mono" size="sm">
+                      <a
+                        href={rampStatus.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Voir l&apos;avis officiel
+                      </a>
+                    </Button>
+                    <Button asChild variant="mono" size="sm">
+                      <a
+                        href={MAGOG_LOISIRS_RAMPE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Page municipale : débit et rampe
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          )}
+        </main>
+
+        <footer className="mt-8 flex flex-col gap-1 text-center">
+          <MonoLabel>
+            Données : Ville de Magog —{' '}
+            <a href={MAGOG_AVIS_URL} target="_blank" rel="noopener noreferrer">
+              avis importants
+            </a>
+          </MonoLabel>
+          <MonoLabel>etatrampemagog.blain-projects.ca</MonoLabel>
+        </footer>
+      </div>
+    </>
   )
 }
 
