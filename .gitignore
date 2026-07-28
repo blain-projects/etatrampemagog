@@ -30,3 +30,7 @@ Thumbs.db
 *.db
 *.sqlite3
 .specify/constitution.md
+
+# Backups taken before editing deploy config
+*.bak
+*.bak-*
