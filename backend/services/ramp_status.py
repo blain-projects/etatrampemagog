@@ -114,7 +114,26 @@ def _parse_flow_m3s(text: str) -> str | None:
 
 
 def _extract_live_flow_from_loisirs_text(text: str) -> str | None:
-    """Prefer an explicit 'débit de la rivière' reading when present on the page."""
+    """Extract actual river flow measurement from the loisirs page.
+
+    The loisirs page has a table like:
+        Débit de la rivière (≤ 70 m3/s) | Débit de la rivière (> 70 m3/s)
+        90 m3/s
+        Navigation autorisée | Navigation interdite
+
+    The threshold values in headers (70) must be skipped; the actual
+    measurement is the standalone value right before "Navigation".
+    """
+    # Primary: the actual flow value always appears right before "Navigation"
+    nav_match = re.search(
+        r"(\d+)\s*m\s*3\s*/\s*s\s*Navigation",
+        text,
+        re.IGNORECASE,
+    )
+    if nav_match:
+        return _format_flow_m3s(int(nav_match.group(1)))
+
+    # Fallback: explicit "débit de la rivière" mention (may hit headers)
     match = re.search(
         r"débit\s+de\s+la\s+rivière[^0-9]{0,80}?(\d+)\s*m\s*3\s*/\s*s",
         text,
@@ -122,6 +141,7 @@ def _extract_live_flow_from_loisirs_text(text: str) -> str | None:
     )
     if match:
         return _format_flow_m3s(int(match.group(1)))
+
     return _parse_flow_m3s(text)
 
 
@@ -152,10 +172,12 @@ def enrich_river_flow_from_loisirs(
     payload: RampStatusResponse,
     loisirs_html: str,
 ) -> RampStatusResponse:
-    """Fill river_flow from the loisirs page when avis importants has no live reading."""
-    if payload.river_flow is not None:
-        return payload
+    """Fill river_flow from the loisirs page and re-evaluate status.
 
+    When the avis importants page has no ramp-specific excerpt, the parser
+    defaults to OPEN.  If we then discover a flow rate > 70 m³/s on the
+    loisirs page we must flip the status to CLOSED.
+    """
     text = _strip_html(loisirs_html)
     flow = _extract_live_flow_from_loisirs_text(text)
     if flow is None:
@@ -164,7 +186,19 @@ def enrich_river_flow_from_loisirs(
     if flow is None:
         return payload
 
-    return payload.model_copy(update={"river_flow": flow})
+    updates: dict = {"river_flow": flow}
+
+    flow_match = FLOW_M3S_RE.search(flow)
+    if flow_match:
+        flow_rate = int(flow_match.group(1))
+        if flow_rate > 70:
+            updates["status"] = RampStatusValue.CLOSED
+            updates["label"] = "Fermée"
+            updates["ramp_info"] = (
+                "Navigation interdite - Débit de la rivière trop élevé (>70 m³/s)"
+            )
+
+    return payload.model_copy(update=updates)
 
 
 def _find_ramp_excerpt(text: str) -> str | None:
