@@ -34,3 +34,8 @@ Thumbs.db
 # Backups taken before editing deploy config
 *.bak
 *.bak-*
+
+# Any .env variant, including timestamped backups (.env.bak.20260728-…)
+.env*
+!.env.example
+*.bak*
