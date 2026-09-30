@@ -1,0 +1,9 @@
+# Shared Liquid UI
+
+This frontend uses the published `@blain-projects/ui` 1.4.2 package, installed from the canonical GitHub Packages URL in its lockfile. Liquid original is the default. A highlighted surface can opt into `appearance="drawn"`; ordinary controls and tables keep the original material.
+
+`bootstrapTheme()` initializes the current system theme on every load. Shared `useTheme()` and `ThemeToggle` allow a manual choice for the current visit and follow system changes without persisted theme preferences. Fixed header/footer chrome reserves space for content; a footer may be hidden on mobile when it reduces usable space. Existing app actions stay in the header. Reduced-motion preferences disable decorative animation.
+
+Shared `Modal` and `Dialog` retain their controlled subtree for the 200 ms fade-out: keep the component mounted and update its `open` prop. Local business data must remain available throughout the exit.
+
+Private package authentication is reused from the existing npm configuration; credentials never belong in source control. The legacy frontend Dockerfiles accept this configuration as the BuildKit secret `npmrc`, configured by Compose from `${HOME}/.npmrc`.

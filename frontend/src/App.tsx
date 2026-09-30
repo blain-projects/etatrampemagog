@@ -1,3 +1,4 @@
+import { BrandThemeToggle } from './BrandThemeToggle'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AlertCircle, CheckCircle2, Loader2, RefreshCw, Ship, XCircle } from 'lucide-react'
 import {
@@ -9,6 +10,7 @@ import {
   CardHeader,
   Display,
   Heading,
+  Header,
   MonoLabel,
   Text,
 } from '@blain-projects/ui'
@@ -108,8 +110,8 @@ function App() {
   return (
     <>
       <BlueprintBackground />
-      <div className="mx-auto flex min-h-screen max-w-[720px] flex-col px-4 py-8">
-        <header className="mb-8 flex items-start justify-between gap-4">
+      <div className="brand-shell mx-auto flex min-h-screen max-w-[720px] flex-col px-4 py-8">
+        <Header className="brand-ramp-header">
           <div className="flex items-center gap-4">
             <Ship className="h-10 w-10 flex-shrink-0 text-[var(--bui-blue-strong)]" aria-hidden="true" />
             <div>
@@ -117,6 +119,7 @@ function App() {
               <Text className="text-[var(--bui-muted)]">Rampe de la capitainerie — Magog</Text>
             </div>
           </div>
+          <div className="brand-header-actions"><BrandThemeToggle />
           <Button
             type="button"
             variant="ghost"
@@ -127,8 +130,8 @@ function App() {
           >
             <RefreshCw className={isRefreshing ? 'spin' : undefined} aria-hidden="true" />
             Actualiser
-          </Button>
-        </header>
+          </Button></div>
+        </Header>
 
         <main className="flex flex-1 items-center justify-center">
           {loadState === 'loading' && rampStatus === null && (
