@@ -25,7 +25,7 @@
   scroll-margin-bottom: var(--bui-footer-offset, 0px);
 }
 .brand-header-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-:is(.steel-select-menu, .tooltip-bubble, .selection-menu, .selection-comment-popup, [role="menu"], [role="listbox"], [data-radix-popper-content-wrapper] > *) {
+:is(.tooltip-bubble, .selection-menu, .selection-comment-popup, [role="menu"], [role="listbox"], [data-radix-popper-content-wrapper] > *) {
   background: var(--bui-popup-bg); color: var(--bui-text);
   border-color: var(--bui-glass-border);
 }
