@@ -1,29 +1,25 @@
-# Frontend Design System (Shadcn + Tailwind v4)
+# Frontend Design System (`@blain-projects/ui` + Tailwind v4)
 
-Ce document régit la création et la modification de tous les composants de l'interface utilisateur.
+This document governs creation and modification of UI in this app.
 
-## Stack Technologique
+## Stack
 
-- **Tailwind CSS v4** (Attention : PAS de fichier `tailwind.config.ts`, tout est géré nativement via `@theme` dans `index.css`).
-- **Shadcn UI** (Composants extraits dans `src/components/ui/`).
-- **Steel Signature** : Notre palette de couleur maison infusée directement dans les variables Shadcn.
+- **`@blain-projects/ui` 1.7.2** — Liquid original theme (`theme.css`), shared chrome (`Header`, `ThemeToggle`), and primitives (`Button`, `Card`, `Badge`, …). See `frontend/BRAND-INTEGRATION.md`.
+- **Tailwind CSS v4** — consumed through the kit theme import in `frontend/src/index.css`. Do not re-import `tailwindcss` there, and do not bring back a `tailwind.config.ts`.
+- **App adapters** — `frontend/src/brand-integration.css` reserves measured header/footer offsets and styles dense popups; it does not re-define floating header chrome.
 
-### ⚠️ Avertissement Tailwind v4
-Ce projet utilise la version **Tailwind v4** très récente.
-Si vous utilisez la commande CLI `npx shadcn@latest add [component]` et qu'elle échoue ou demande l'ancien `tailwind.config.ts`, **résolvez les problèmes manuellement** :
-1. N'essayez PAS de ramener Tailwind v3 ou de recréer les vieux fichiers de configuration.
-2. Téléchargez les composants en brut (fichiers `.tsx`) si le CLI bloque continuellement.
-3. Assurez-vous que l'import css continue de fonctionner via `@import "tailwindcss";`.
+## Implementation standards
 
-## Standards d'Implémentation
+When adding or changing UI:
 
-Quand l'utilisateur demande la création d'un nouveau composant ou d'une nouvelle page :
-1. **Unification absolue** : Par défaut, utilisez les utilitaires Shadcn / Tailwind préconfigurés.
-2. **Cohérence Visuelle** : Appliquez les composants du dossier `src/components/ui/` (ex: `Button`, `Card`, `Dialog`) au lieu de créer des équivalents en CSS pur. Ils hériteront automatiquement du style "Steel Signature".
-3. **Couleurs de marque** : Pour les appels à l'action ou les marqueurs d'identité, utilisez les classes standards Shadcn (ex: `bg-primary`, `text-muted-foreground`), car elles sont mappées sur nos tons d'acier (`var(--color-steel-600)`).
-4. **Dark Mode** : Le multi-thème (support du mode sombre et clair via le toggle de l'en-tête) est obligatoire. N'écrivez jamais de `bg-white` en dur sur un conteneur principal ; utilisez `bg-card` ou `bg-background`.
+1. **Import from the kit** — use `@blain-projects/ui` (as `App.tsx` does). Do not invent local Button/Card/Input implementations.
+2. **Compatibility shims only** — `frontend/src/components/ui/button.tsx` and `input.tsx` re-export the kit. Prefer direct kit imports for new code. Do not restore a local `card` module.
+3. **Tokens** — style with `--bui-*` from the kit theme. App-only FlowGauge colors live in `frontend/src/index.css`; do not redefine the kit theme.
+4. **Theme** — light/dark via kit `bootstrapTheme` / `ThemeToggle`. Never hard-code page backgrounds; use kit surfaces (`--bui-bg`, `--bui-surface`, …).
+5. **Mobile-first** — keep the status layout readable at 375px; preserve ramp status vocabulary, refresh behaviour, and municipal source links.
 
-## Composants Existants
+## Where to look
 
-Consultez systématiquement `src/components/ui/` avant de réinventer une roue.
-Si l'utilisateur demande un concept simple (exemple : "un formulaire de login"), vous devez l'assembler avec les `<Input>` et `<Button>` du dossier `ui/`.
+- `frontend/BRAND-INTEGRATION.md` — package version, floating header, theme contract.
+- `docs/ui-uniformity-2026-10-08.md` — dated note for the 2026-10-08 uniformity pass.
+- `frontend/src/App.tsx` — live composition of Header, theme toggle, Card, and status content.

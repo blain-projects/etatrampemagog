@@ -14,17 +14,19 @@ Enforce consistent Steel Signature visual behavior for frontend implementation.
 Before editing frontend UI styles/components, read:
 
 - `AI skills/steel-signature-colors.md`
+- `frontend/BRAND-INTEGRATION.md`
 
 ## Implementation Rules
 
-- Use design tokens from `frontend/src/index.css`.
+- Import UI from `@blain-projects/ui`; use `--bui-*` tokens from the kit theme.
+- Keep app-only FlowGauge colors in `frontend/src/index.css`; do not redefine the kit theme.
 - Prefer token-based styling in `App.css` or component CSS modules.
 - Keep interaction states consistent:
   - hover: subtle emphasis
   - focus-visible: explicit ring via token
   - disabled: reduced emphasis, still readable
 - Preserve light/dark support for all new UI styles.
-- **Header theme toggle:** the main app shell must include a light/dark control in the **header** (top bar), wired to `data-theme` on the document root, with system preference as the default when unset.
+- **Header theme toggle:** the main app shell must include a light/dark control in the **header** (kit floating `Header`), wired to `data-theme` on the document root, with system preference as the default when unset.
 
 ## Quick Checklist
 
