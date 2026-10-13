@@ -13,6 +13,25 @@ alwaysApply: true
 - INTERDIT d'utiliser du hex brut ou de redéfinir le thème.
 - Si un composant manque → ajoute-le AU PACKAGE `@blain-projects/ui`, jamais localement.
 
+## Modifier / corriger un primitif partagé (réflexe par défaut)
+- Toute demande de modif visuelle qui touche un primitif partagé (composant importé de
+  `@blain-projects/ui`, classe `bui-*`, token `--bui-*`) se corrige DANS le package
+  `blain-ui`, PAS par un patch/override local. Un fix local = dette + divergence entre apps.
+- Heuristique promote-vs-local : réutilisable partout (Button, Card, Badge, StatusLED,
+  Dialog, Grid…) → package ; spécifique au domaine (MapModule, nœuds React Flow,
+  FlowGauge…) → reste local, tokens aliasés vers `--bui-*`.
+- Au moindre doute sur le scope (brand cosmétique vs slug technique vs primitif partagé),
+  demande à Guillaume avant de toucher.
+- Après un fix dans `blain-ui` : bump SemVer + CHANGELOG → publie → propage aux consumers
+  (`npm update`, tous en `^1.x`) + redeploy. Playbook complet : skill `blain-ui-governance.md`.
+
+## Validation CSS — vrai build, pas juste tsc
+- `theme.css` est de la SOURCE Tailwind v4 (`@theme`/`@layer`). Le `tsc` valide les types,
+  PAS le CSS. Garde `tailwindcss` + `@tailwindcss/vite` (plugin dans `vite.config`), sinon
+  le build sort 0 mais l'UI casse en silence (tokens/utilities non générés).
+- Roule un VRAI `vite build` et valide le rendu (375px + desktop) avant « done ».
+- Noms de tokens exacts : `--bui-bg`/`--bui-r-sm` (PAS `--bui-color-bg`/`--bui-radius-sm`).
+
 ## Mobile-first & minimal
 - Sur mobile, on montre l'ESSENTIEL : action principale + contenu.
 - On CACHE menus / settings / filtres secondaires via `MobileOnly` / `DesktopOnly`,

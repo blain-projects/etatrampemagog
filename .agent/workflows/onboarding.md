@@ -19,18 +19,24 @@ Activates when **either** is true at the repo root:
 ## Immediate actions (priority over any user request)
 
 1. **Stop** current task evaluation. Onboarding has absolute priority.
-2. **Acknowledge** to the user — ~1 short paragraph.
-3. **Plan** — write a 5-7 step plan, present it, **wait for user
+2. **Exception:** for read-only reviews, CI/deployment repairs, security
+   hotfixes, or other non-interactive automations where no user can answer
+   onboarding questions, leave the sentinel intact, perform only that bounded
+   safeguard task, and report that onboarding remains pending.
+3. **Acknowledge** to the user — ~1 short paragraph.
+4. **Plan** — write a 5-7 step plan, present it, **wait for user
    approval**. Do not skip this — it forces alignment before questions.
-4. **Analyze** the repository (silent reading).
-5. **Question** in batches of 2-3, saving to `PROJECT.md` after each.
-6. **Fill** artifacts manually for `PROJECT.md`, `CONTEXT.md`,
-   `.specify/constitution.md`.
-7. **Finalize** by running
+5. **Analyze** the repository (silent reading).
+6. **Question** in batches of 2-3, saving to `PROJECT.md` after each.
+7. **Fill** artifacts manually for `PROJECT.md`, `CONTEXT.md`,
+   `.specify/constitution.md`, and `blain-agent-kit.json` (`codeIndex`
+   from Batch F — write even when indexing is declined). Create
+   project-scoped `.mcp.json` only if indexing was enabled.
+8. **Finalize** by running
    `scripts/finalize-onboarding.sh --name <slug> --tagline "<…>"`
    — this deletes `ONBOARDING.md`.
-8. **Verify** with `PROJECT_NAME=<slug> ./scripts/validate-deploy-ready.sh`.
-9. **Resume** the original user request (preserved verbatim from step 1).
+9. **Verify** with `PROJECT_NAME=<slug> ./scripts/validate-deploy-ready.sh`.
+10. **Resume** the original user request (preserved verbatim from step 1).
 
 ## Key rules
 

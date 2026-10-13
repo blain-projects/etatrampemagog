@@ -17,6 +17,11 @@ Activated when either of these is true at the repo root:
 The presence of either is **non-negotiable priority**: stop the user's
 current request, run onboarding to completion, then resume.
 
+Exception: for read-only reviews, CI/deployment repairs, security hotfixes,
+or other non-interactive automations where no user can answer onboarding
+questions, keep the sentinel and `PROJECT.md` marker intact, perform only
+that bounded safeguard task, and report that onboarding remains pending.
+
 ## Goal
 
 After onboarding, a `grep -RIn "Fullstack Hybrid Template\|\[NAME\]\|web_projects_template" .`
@@ -114,9 +119,8 @@ batch. Save answers to `PROJECT.md` immediately after each batch.
 7. **Visual style in 3 words?**
 8. **Primary brand color?** (Hex or descriptor)
 9. **Inspiration sources?** (URLs / mood)
-10. **Replace the "Steel Signature" baseline branding?** (yes/no — if
-    no, the showcase page stays as is until the user redesigns it
-    themselves)
+10. **Replace the Liquid / `@blain-projects/ui` baseline branding?** (yes/no — if
+    no, `/` and `/design-system` stay as shipped until the user redesigns them)
 
 ### Batch D — Technical Constraints
 
@@ -135,6 +139,28 @@ batch. Save answers to `PROJECT.md` immediately after each batch.
 16. **Definition of success in 3 months?**
 17. **Competitors and differentiator?**
 
+### Batch F — Code indexing (optional tooling)
+
+18. **Index this repo with V3Code?** (yes/no — default **no**)
+    V3Code exposes a local MCP server serving a semantic index and a
+    structural view of the codebase. Answering yes lets an agent resolve
+    "who calls this symbol" in one tool call instead of a grep loop.
+19. **If yes — index posture: `local` or `cloud`?** (default **local**)
+    `cloud` sends code fragments and their embeddings to V3Code's
+    infrastructure. Fine for a public or throwaway project; wrong for
+    anything carrying infrastructure topology, credentials or client data.
+    Ask it explicitly — never infer it.
+
+> **Never default to yes on question 18.** An indexer is opt-in, and the
+> `cloud` posture ships code off the machine. If the user has no opinion,
+> record `no` and move on — it can be turned on later (see Phase 4), which
+> is exactly why the answer goes to a durable file instead of being applied
+> once and forgotten.
+
+> Non-interactive runs never reach this batch: the "Exception for unattended
+> safeguards" in `ONBOARDING.md` already halts onboarding when no user can
+> answer. Do not add a flag to bypass it.
+
 > If the user supplies a multi-question answer up front, fold it in and
 > skip past those questions. Never ask the same thing twice.
 
@@ -152,6 +178,23 @@ Manual edits the agent still does:
   first 3-5 domain terms (drawn from the answers).
 - `.specify/constitution.md` — update the "Last updated" line and the
   free-text reference to template if any.
+- `blain-agent-kit.json` — record the Batch F answers as a durable,
+  re-readable posture, e.g.
+  `"codeIndex": { "provider": "v3code", "enabled": false, "posture": "local" }`.
+  Write it even when the answer is `no`: an explicit `false` is what lets a
+  later session know the question was asked and settled, instead of asking
+  again or guessing.
+- `.mcp.json` — **only if `enabled` is true.** Project scope, never user
+  scope: a user-scoped server puts its tool schemas in the prefix of every
+  session on the machine, including the ones that never touch this repo.
+  Expose only the structural family (call graph, symbol context, file
+  dependencies) — the search and diagnostic families duplicate tools the
+  agent already has.
+
+> Enabling the index does **not** build it. Someone has to open the repo in
+> V3Code once so it indexes; the MCP server serves an index, it does not
+> create one. Say this to the user rather than leaving them with a config
+> that answers nothing.
 
 ## Phase 5 — Finalization
 
@@ -219,7 +262,7 @@ verify).
 | Delete `ONBOARDING.md` manually | Let `finalize-onboarding.sh` do it (it gates on substitutions succeeding) |
 | Improvise answers | Always ask; never assume |
 | Skip phases under user pressure | Acknowledge urgency, complete anyway (3 min) |
-| Touch generic infra docs in finalization | Keep `NETWORK.md`, `OPENCLAW.md`, `AI skills/*` generic |
+| Touch generic infra docs in finalization | Keep `NETWORK.md`, `OPENCLAW.md`, `AI skills/*` generic; project-specific facts go to `AI skills/<skill>.local.md` |
 
 ## Token-saving tips
 

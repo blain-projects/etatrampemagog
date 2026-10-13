@@ -253,11 +253,13 @@ curl -s http://localhost:18790/health
 # → {"status":"ok","service":"openclaw-relay-helper"}
 
 # 2. Vérifier que le conteneur backend voit le bridge (Docker DNS)
-docker exec monprojet-back curl -s http://openclaw-bridge:8000/health
+#    Le conteneur backend s'appelle ${PROJECT_NAME}-back (PROJECT_NAME vient du .env).
+PROJECT_NAME="$(sed -n 's/^PROJECT_NAME=//p' .env)"
+docker exec "${PROJECT_NAME}-back" curl -s http://openclaw-bridge:8000/health
 # → {"status":"ok","service":"openclaw-bridge"}
 
 # 3. Tester un appel complet (ping)
-docker exec monprojet-back python -c "
+docker exec "${PROJECT_NAME}-back" python -c "
 import httpx
 r = httpx.post(
     'http://openclaw-bridge:8000/api/internal/v1/agents/fishey/send',

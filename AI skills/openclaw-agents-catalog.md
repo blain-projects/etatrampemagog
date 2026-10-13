@@ -104,8 +104,9 @@ Si tu as besoin d'un agent spécifique :
 # Liste des ids actuels (depuis le host)
 python3 -c "import json; print('\n'.join(a['id'] for a in json.load(open('/home/blain/.openclaw/openclaw.json'))['agents']['list']))"
 
-# Ping un agent depuis ton conteneur
-docker exec monprojet-back python -c "
+# Ping un agent depuis ton conteneur backend (${PROJECT_NAME}-back, PROJECT_NAME vient du .env)
+PROJECT_NAME="$(sed -n 's/^PROJECT_NAME=//p' .env)"
+docker exec "${PROJECT_NAME}-back" python -c "
 import httpx
 r = httpx.post(
     'http://openclaw-bridge:8000/api/internal/v1/agents/tier2/send',

@@ -18,3 +18,10 @@ alwaysApply: false
 
 ## Persistance
 - Utilise des volumes pour toute donnée à persister.
+
+## Redéploiement en prod
+- Le code est copié dans l'image au build : éditer, committer ou pousser ne change rien au site live.
+- Après une modif à faire review : `docker compose up -d --build` depuis le checkout de prod
+  (`com.docker.compose.project.working_dir` du conteneur, jamais un worktree), puis vérifie
+  que le changement est servi avant de demander la review.
+- Procédure complète, vérifs et rollback : skill `prod-redeploy.md`.

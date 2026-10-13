@@ -10,7 +10,7 @@
 - Prefer battle-tested solutions over hand-rolled code
 
 ## 1) Before Coding
-- Read `project-context.md` and `deployment-architecture.md`
+- Read `project-context.md` and `deployment-architecture.md` (and their `.local.md` companions, if present)
 - Identify impacted endpoints, components, and modules
 - Check `CONTEXT.md` for the right vocabulary to use
 - Clarify local and production impact

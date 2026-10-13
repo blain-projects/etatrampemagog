@@ -1,11 +1,17 @@
 # Project Context
 
+> Generic context shared by every app built from the template. Context that
+> belongs to THIS project (its pipelines, its exceptions) lives in
+> `AI skills/project-context.local.md`, which the kit sync never touches. If
+> that file exists, read it too: where it differs from this one, it wins.
+
 ## Target stack
 
 - Frontend: React 19 + TypeScript + Vite (React Compiler enabled).
 - Backend: Python 3.9+ + FastAPI, run with Uvicorn in production.
 - Infrastructure: Docker Compose + Traefik v3.
-- Internal network: `web_network` (inter-service communication through Docker DNS).
+- Internal network: `web_network` by default (inter-service communication through Docker DNS).
+  A project on another network says so in `deployment-architecture.local.md`.
 
 ## Local startup
 
@@ -23,12 +29,13 @@
 ## Integration conventions
 
 - From browser clients, use the public API URL in production (for example: `https://api.<project>.blain-projects.ca/...`).
-- Between internal containers/services on `web_network`, use `http://<container-name>:<port>/...`.
-  For the backend of THIS template, the container is `${PROJECT_NAME}-back` listening on `5000`.
+- Between containers that share a network, use `http://<container-name>:<port>/...`.
+  For the backend of THIS app, the container is `${PROJECT_NAME}-back` listening on `5000`.
   Generic alias `http://backend:5000` only resolves if the compose service is named `backend`
   AND containers share the same compose project network — for cross-project calls always use
   the explicit container name.
-- To reach an OpenClaw agent, use `http://openclaw-bridge:8000/api/internal/v1/agents/{id}/send`.
+- From a backend on `web_network`, reach an OpenClaw agent with
+  `http://openclaw-bridge:8000/api/internal/v1/agents/{id}/send`.
   See `OPENCLAW.md` and `openclaw-agents-catalog.md`.
 
 ## Important constraints

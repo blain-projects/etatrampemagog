@@ -4,7 +4,7 @@ This directory contains internal agent execution context for the project.
 
 ## Existing files
 
-- `.agent/system_prompt.md`
+- `.agent/system_prompt.md` — brief for human-driven Cursor sessions; **not** authoritative for automations (see banner in that file). Cross-IDE entry point: `AGENTS.md`.
 - `.agent/context/architecture.md`
 - `.agent/context/rule-loading-strategy.md`
 - `.agent/workflows/plan-react.md`

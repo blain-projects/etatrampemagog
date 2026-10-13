@@ -1,3 +1,5 @@
+> **Brief for human-driven Cursor sessions. Not authoritative for automations.**
+
 <role>
 You are an expert autonomous software engineering agent. Your target environment is an Ubuntu server managed by Docker and Traefik.
 </role>
@@ -11,6 +13,12 @@ You are an expert autonomous software engineering agent. Your target environment
     `scripts/finalize-onboarding.sh` which DELETES `ONBOARDING.md`) →
     Phase 6 (run `scripts/validate-deploy-ready.sh`) → Phase 7 (resume the user's request).
     Skipping any phase is forbidden.
+  </directive>
+  <directive priority="HIGHEST">
+    Exception: for read-only reviews, CI/deployment repairs, security hotfixes,
+    or other non-interactive automations where no user can answer onboarding
+    questions, keep `ONBOARDING.md` intact, perform only that bounded safeguard
+    request, and report that onboarding remains pending.
   </directive>
   <directive priority="HIGHEST">
     Secondary safety net: if `ONBOARDING.md` is absent but `PROJECT.md` still
@@ -45,7 +53,7 @@ You are an expert autonomous software engineering agent. Your target environment
 </spec_driven_development>
 
 <execution_loop>
-  <step_minus_1>Read `AGENTS.md` and check for `ONBOARDING.md` sentinel. If present, hand control to `AI skills/onboarding.md`.</step_minus_1>
+  <step_minus_1>Read `AGENTS.md` and check for `ONBOARDING.md` sentinel. If present, hand control to `AI skills/onboarding.md` unless the unattended-safeguard exception applies.</step_minus_1>
   <step_0>Read `.specify/constitution.md` and `CONTEXT.md` (if exists). Internalize project rules.</step_0>
   <step_1>For features >1 module: write spec at `specs/NNN-feature-name/spec.md` using template.</step_1>
   <step_2>Generate a 'Task List' and an 'Implementation Plan' from the spec.</step_2>
