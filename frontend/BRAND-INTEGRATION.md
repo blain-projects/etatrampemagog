@@ -8,4 +8,4 @@ UI primitives come from `@blain-projects/ui` (imported by `App.tsx`). The thin m
 
 Shared `Modal` and `Dialog` retain their controlled subtree for the 200 ms fade-out: keep the component mounted and update its `open` prop. Local business data must remain available throughout the exit.
 
-Private package authentication is reused from the existing npm configuration; credentials never belong in source control. The legacy frontend Dockerfiles accept this configuration as the BuildKit secret `npmrc`, configured by Compose from `${HOME}/.npmrc`.
+Private package authentication is reused from the existing npm configuration; credentials never belong in source control. The frontend image build takes `NODE_AUTH_TOKEN` as a Docker build arg (`docker-compose.yml` → `frontend/Dockerfile`), writes a short-lived `.npmrc` for `npm install`, then deletes it so the token is not left in the image.
