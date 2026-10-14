@@ -49,9 +49,12 @@ cd <checkout> && docker compose up -d --build frontend   # un seul service
 
 - Le build se fait **avant** l'arrêt de l'ancien conteneur : si le build échoue, la
   version précédente reste en ligne.
-- Frontend : le build a besoin de `NODE_AUTH_TOKEN` dans le `.env` du checkout (package
-  privé `@blain-projects/ui`). Un 401/403 sur `npm ci` = token absent ou expiré, pas un
-  bug de code.
+- Frontend : le build lit `NODE_AUTH_TOKEN` depuis l'environnement du shell qui lance
+  compose ; compose le passe comme secret BuildKit `npm_token`
+  (`docker-compose.yml` → `frontend/Dockerfile`), jamais en build-arg ni via le `.env`
+  du checkout. Un 401/403 sur `npm install` = token absent ou expiré, pas un bug de
+  code. `scripts/check-build-secrets.sh` (appelé par `validate-deploy-ready.sh`) refuse
+  le formulaire build-arg.
 - Backend : `alembic upgrade head` roule au démarrage, donc la migration s'applique au
   redeploy. Les données vivent dans le volume `/app/data` et survivent au rebuild.
 
