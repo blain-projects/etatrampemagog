@@ -1,18 +1,23 @@
+# syntax=docker/dockerfile:1.10
+# ──────────────────────────────────────────────────────────────────────────────
 # Étape 1 : Construction (Build)
+# Le token GitHub Packages (NODE_AUTH_TOKEN, scope read:packages) sert uniquement
+# à résoudre le package PRIVÉ @blain-projects/ui. Il arrive comme SECRET BuildKit
+# `npm_token` (docker-compose.yml → secrets), exposé en variable d'environnement
+# le temps du seul `npm install` ; frontend/.npmrc le lit via ${NODE_AUTH_TOKEN}.
+#
+# JAMAIS d'`ARG NODE_AUTH_TOKEN` ni de `--build-arg` : BuildKit enregistre les
+# build-args et les lignes RUN expansées dans son historique et son cache
+# (/var/lib/docker), lisibles par tout le groupe docker.
+# scripts/check-build-secrets.sh fait échouer le déploiement s'ils reviennent.
+# ──────────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine as builder
 WORKDIR /app
 
-# Jeton d'accès au registre GitHub Packages pour @blain-projects/ui.
-# Fourni au build via --build-arg NODE_AUTH_TOKEN=... (voir docker-compose.yml).
-ARG NODE_AUTH_TOKEN
+# .npmrc ne contient que le placeholder ${NODE_AUTH_TOKEN}, jamais de valeur.
+COPY package*.json .npmrc ./
 
-COPY package*.json ./
-
-# .npmrc éphémère : authentifie le scope @blain-projects sur GitHub Packages
-# le temps du npm install, puis est supprimé pour ne pas fuiter dans l'image.
-RUN printf "@blain-projects:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\nalways-auth=true\n" "$NODE_AUTH_TOKEN" > .npmrc \
-    && npm install \
-    && rm -f .npmrc
+RUN --mount=type=secret,id=npm_token,env=NODE_AUTH_TOKEN npm install
 
 COPY . .
 RUN npm run build

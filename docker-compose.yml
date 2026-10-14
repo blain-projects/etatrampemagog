@@ -8,7 +8,9 @@
 # ENVIRONMENT VARIABLES (auto-injected by deploy.sh into .env):
 #   PROJECT_NAME  — used in container names, Traefik router names, subdomain
 #   DOMAIN_NAME   — always "blain-projects.ca"
-#   NODE_AUTH_TOKEN — GitHub Packages token to install @blain-projects/ui
+#   NODE_AUTH_TOKEN — GitHub Packages token to install @blain-projects/ui.
+#                     NOT in .env: shell env, handed to the build as the
+#                     BuildKit secret npm_token (see `secrets:` at the bottom).
 #
 # RESULTING URLs:
 #   Frontend → https://${PROJECT_NAME}.blain-projects.ca
@@ -27,10 +29,11 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
-        # Jeton d'accès GitHub Packages pour installer @blain-projects/ui.
-        # Vide par défaut — fourni par l'environnement de build/CI.
-        NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-}
+      # Token GitHub Packages (read:packages) pour @blain-projects/ui : secret
+      # BuildKit monté le temps du seul `npm install`, JAMAIS en build-arg (un
+      # build-arg reste en clair dans l'historique BuildKit). Voir `secrets:` en bas.
+      secrets:
+        - npm_token
     container_name: ${PROJECT_NAME}-front
     restart: unless-stopped
     networks:
@@ -141,3 +144,10 @@ networks:
   web_network:
     external: true    # This network is created once and shared across ALL projects.
                       # Create it with: docker network create web_network
+
+# Build secret for the frontend (see frontend/Dockerfile). The value is the
+# NODE_AUTH_TOKEN of the shell running compose; never copy it into .env (one
+# more plaintext copy to rotate, and an env_file would push it into a container).
+secrets:
+  npm_token:
+    environment: NODE_AUTH_TOKEN

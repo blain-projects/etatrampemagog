@@ -22,6 +22,8 @@ it does **not** apply pending Alembic revisions by itself.
 
 - Images still bake application code (no source bind mount); only
   `backend_sqlite_data` is mounted at `/app/data`.
-- Frontend build still needs `NODE_AUTH_TOKEN` in the prod checkout `.env`
-  (`docker-compose.yml` → build arg → `frontend/Dockerfile`).
+- Frontend build needs `NODE_AUTH_TOKEN` in the shell environment (loaded by
+  `~/.bashrc` from `~/.openclaw/secrets/npm-github.env`), **not** in the
+  checkout `.env`. Compose hands it to the build as the BuildKit secret
+  `npm_token` (`docker-compose.yml` → `secrets:` → `frontend/Dockerfile`).
 - Rebuild / verify / review sequence in `prod-redeploy.md` still applies.
