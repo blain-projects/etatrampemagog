@@ -140,7 +140,6 @@ echo "── Security: secrets scan ──"
 SECRETS=$(grep -rIn "sk-.*\|api_key.*=.*\"[^\"]\{20,\}\|token.*=.*\"[^\"]\{20,\}" \
   backend/ frontend/src/ --include="*.py" --include="*.ts" --include="*.tsx" 2>/dev/null \
   | grep -v "apiFetch" \
-  | grep -v "bridge-super-secret" \
   | grep -v ".env" \
   || true)
 

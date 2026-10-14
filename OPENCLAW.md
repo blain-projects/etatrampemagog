@@ -165,9 +165,10 @@ OPENCLAW_BRIDGE_TOKEN=
 ### Rotation du token
 
 Pour changer le token :
-1. Mettre à jour `BRIDGE_TOKEN` dans le `main.py` du bridge
-2. Mettre à jour le `.env` de chaque projet utilisant le bridge
-3. `docker compose up -d --build openclaw-bridge` (dans `~/.openclaw/workspace-project-agent/openclaw-bridge`)
+1. Mettre à jour `BRIDGE_API_TOKEN` dans le `.env` du bridge (`~/.openclaw/workspace-project-agent/openclaw-bridge/.env`, jamais commité). `main.py` le lit au démarrage, sans valeur par défaut : s'il manque, le bridge refuse de démarrer.
+2. Mettre à jour `OPENCLAW_BRIDGE_TOKEN` dans le `.env` de chaque projet utilisant le bridge
+3. `cd ~/.openclaw/workspace-project-agent/openclaw-bridge && docker compose up -d --build openclaw-bridge`
+4. Recréer le conteneur backend de chaque projet (`docker compose up -d --force-recreate <service backend>`) : un conteneur ne relit son `.env` qu'à sa création.
 
 ## 🛠️ Maintenance
 
