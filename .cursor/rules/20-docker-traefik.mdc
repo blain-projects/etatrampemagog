@@ -8,7 +8,10 @@ alwaysApply: false
 # Docker & Traefik
 
 ## Réseau
-- Tous les services tournent sur `web_network`.
+- `web_network` par défaut pour tous les services.
+- Exception de projet (autre réseau, réseau `--internal`) : documentée dans
+  `AI skills/deployment-architecture.local.md`, qui prime, après un `/approve`
+  (`10-security.mdc`). Elle ne touche que le réseau, jamais la règle des ports.
 - JAMAIS exposer de ports (`ports:`). Traefik route via les labels.
 - Service privé = label `google-auth@docker`.
 

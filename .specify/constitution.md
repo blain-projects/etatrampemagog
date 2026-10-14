@@ -1,4 +1,4 @@
-<!-- BEGIN blain-agent-kit:constitution (managed v0.5.0) -->
+<!-- BEGIN blain-agent-kit:constitution (managed v0.5.1) -->
 ## Constitution agent blain-projects (managée par blain-agent-kit)
 
 > Bloc **managé par blain-agent-kit**. Articles VÉRIFIABLES avant de déclarer une tâche "done". Édite dans le repo `blain-agent-kit`, pas ici. Le contenu hors de ce bloc reste local.
