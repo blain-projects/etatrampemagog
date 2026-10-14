@@ -91,12 +91,14 @@ networks:
 ```python
 # backend/openclaw_transport.py
 import httpx
+import os
 
 def send_to_agent(agent: str, prompt: str) -> dict:
+    token = os.environ["OPENCLAW_BRIDGE_TOKEN"]
     return httpx.post(
         f"http://openclaw-bridge:8000/api/internal/v1/agents/{agent}/send",
         json={"prompt": prompt, "timeout_seconds": 120},
-        headers={"X-Bridge-Token": "bridge-super-secret-token-2026"},
+        headers={"X-Bridge-Token": token},
         timeout=150,
     ).json()
 ```

@@ -116,13 +116,13 @@ Ce template intègre une architecture standard pour communiquer avec n'importe q
 
 🔗 **[Voir OPENCLAW.md](OPENCLAW.md)** pour la documentation complète : architecture, sécurité, code d'intégration, dépannage.
 
-En résumé :
+En résumé (le token vient de l'env du conteneur, jamais en dur) :
 ```python
-import httpx
+import httpx, os
 r = httpx.post(
     "http://openclaw-bridge:8000/api/internal/v1/agents/fishey/send",
     json={"prompt": "Ta question", "timeout_seconds": 120},
-    headers={"X-Bridge-Token": "bridge-super-secret-token-2026"}
+    headers={"X-Bridge-Token": os.environ["OPENCLAW_BRIDGE_TOKEN"]},
 )
 print(r.json()["response"])  # Réponse JSON structurée de l'agent
 ```

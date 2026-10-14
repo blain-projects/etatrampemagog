@@ -69,21 +69,31 @@
 
 - ✅ **OpenClaw Agent Bridge** : `openclaw-bridge` (Docker, réseau `web_network`)
 - ✅ **OpenClaw Relay Helper** : `openclaw-relay-helper.service` (systemd, port 18790)
-- ✅ **Token partagé** : `bridge-super-secret-token-2026`
+- ✅ **Token** : variable d'environnement `OPENCLAW_BRIDGE_TOKEN` (secret, jamais en clair dans le repo)
 
 > Ces services sont **déjà en place** sur `serveur-blain`. Tu n'as rien à installer.
+> Module transport complet et tests : [`AI skills/openclaw-bridge.md`](AI%20skills/openclaw-bridge.md).
 
 ### 2. Code d'intégration (Python)
 
+Le token se lit uniquement depuis l'environnement — pas de valeur en dur, pas de fallback :
+
 ```python
 import httpx
+import os
 
 class OpenClawTransport:
     """Transport standard pour communiquer avec un agent OpenClaw."""
 
     def __init__(self, agent: str = "fishey"):
-        self._bridge_url = "http://openclaw-bridge:8000"
-        self._token = "bridge-super-secret-token-2026"
+        self._bridge_url = os.getenv(
+            "OPENCLAW_BRIDGE_URL", "http://openclaw-bridge:8000"
+        )
+        self._token = os.getenv("OPENCLAW_BRIDGE_TOKEN")
+        if not self._token:
+            raise RuntimeError(
+                "OPENCLAW_BRIDGE_TOKEN manquant : ajoute-le au .env du projet"
+            )
         self._agent = agent
 
     def send_prompt(self, prompt: str, timeout: int = 120) -> dict:
@@ -115,12 +125,14 @@ result = transport.send_prompt("Quel poisson pêcher au lac Memphremagog?")
 
 ### 3. Configuration Docker (docker-compose.yml)
 
-Ton conteneur doit être sur `web_network` pour accéder au bridge :
+Ton conteneur doit être sur `web_network` et recevoir le token (via `env_file: .env` ou `environment`) :
 
 ```yaml
 services:
   mon-backend:
     # ...
+    env_file: .env
+    # ou: environment: - OPENCLAW_BRIDGE_TOKEN=${OPENCLAW_BRIDGE_TOKEN}
     networks:
       - web_network
 
@@ -131,15 +143,16 @@ networks:
 
 ### 4. Variables d'environnement
 
-Ajoute au `.env` de ton projet :
+Ajoute au `.env` de ton projet (ignoré par git, jamais commité) :
 
 ```env
 OPENCLAW_BRIDGE_URL=http://openclaw-bridge:8000
-OPENCLAW_BRIDGE_TOKEN=bridge-super-secret-token-2026
+OPENCLAW_BRIDGE_TOKEN=
 ```
 
-> ⚠️ Le token est partagé entre tous les projets internes. Si un projet externe
-> doit utiliser le bridge, passe par l'endpoint public (`/api/v1/...`) avec Google Auth.
+> ⚠️ `OPENCLAW_BRIDGE_TOKEN` est un secret (`10-security`) : valeur uniquement dans `.env`,
+> jamais dans un fichier versionné ni dans un exemple. Si un projet externe doit utiliser
+> le bridge, passe par l'endpoint public (`/api/v1/...`) avec Google Auth.
 
 ## 🔒 Sécurité
 
@@ -167,11 +180,23 @@ docker logs openclaw-bridge --tail 10
 # Relay Helper
 systemctl --user status openclaw-relay-helper.service
 
-# Tester le endpoint
-docker exec fishing-backend python -c "
+# Tester le healthcheck (pas de token requis)
+PROJECT_NAME="$(sed -n 's/^PROJECT_NAME=//p' .env)"
+docker exec "${PROJECT_NAME}-back" python -c "
 import httpx
 r = httpx.get('http://openclaw-bridge:8000/health')
 print(r.json())
+"
+
+# Tester un appel complet — token lu dans l'env du conteneur, jamais tapé en clair
+docker exec "${PROJECT_NAME}-back" python -c "
+import httpx, os
+r = httpx.post(
+    'http://openclaw-bridge:8000/api/internal/v1/agents/fishey/send',
+    json={'prompt': 'ping', 'timeout_seconds': 30},
+    headers={'X-Bridge-Token': os.environ['OPENCLAW_BRIDGE_TOKEN']},
+)
+print(r.status_code, r.json())
 "
 ```
 
@@ -206,4 +231,4 @@ Aucune modification du bridge nécessaire. Seul le relay helper doit pouvoir ex�
 
 ---
 
-> **Dernière mise à jour :** 2026-05-15 — Architecture validée et testée avec Fishing Buddy.
+> **Dernière mise à jour :** 2026-10-14 — Token exclusivement via `OPENCLAW_BRIDGE_TOKEN` (aligné `AI skills/openclaw-bridge.md`).
