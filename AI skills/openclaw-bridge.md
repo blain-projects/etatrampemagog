@@ -36,10 +36,13 @@ Le pattern est inspiré de `fishey_transport.py` — un client HTTP léger qui w
 ### 1. Variables d'Environnement
 
 ```env
-# .env du projet
+# .env du projet (ignoré par git, jamais commité)
 OPENCLAW_BRIDGE_URL=http://openclaw-bridge:8000
-OPENCLAW_BRIDGE_TOKEN=bridge-super-secret-token-2026
+# Valeur fournie par Guillaume. Elle ne va que dans .env, jamais dans un fichier versionné.
+OPENCLAW_BRIDGE_TOKEN=
 ```
+
+Le token est un secret (règle `10-security`) : le code et les exemples le lisent toujours dans `OPENCLAW_BRIDGE_TOKEN`, jamais en dur. Passe-le au conteneur backend par `env_file: .env` (ou `environment: - OPENCLAW_BRIDGE_TOKEN=${OPENCLAW_BRIDGE_TOKEN}`).
 
 ### 2. Code Réutilisable
 
@@ -70,15 +73,17 @@ class OpenClawTransport:
         Args:
             agent: Nom de l'agent cible (ex: "fishey", "buddy").
             bridge_url: URL du bridge (défaut: depuis env ou fallback).
-            token: Token d'authentification (défaut: depuis env ou fallback).
+            token: Token d'authentification (défaut: OPENCLAW_BRIDGE_TOKEN, obligatoire).
         """
         self._agent = agent
         self._bridge_url = bridge_url or os.getenv(
             "OPENCLAW_BRIDGE_URL", "http://openclaw-bridge:8000"
         )
-        self._token = token or os.getenv(
-            "OPENCLAW_BRIDGE_TOKEN", "bridge-super-secret-token-2026"
-        )
+        self._token = token or os.getenv("OPENCLAW_BRIDGE_TOKEN")
+        if not self._token:
+            raise RuntimeError(
+                "OPENCLAW_BRIDGE_TOKEN manquant : ajoute-le au .env du projet"
+            )
 
     def send_prompt(
         self, prompt: str, timeout: int = 120, session_id: Optional[str] = None
@@ -164,11 +169,23 @@ import pytest
 from unittest.mock import patch, MagicMock
 
 
-def test_transport_uses_env_vars():
+TEST_TOKEN = "test-token"
+
+
+def test_transport_uses_env_vars(monkeypatch):
     """Vérifie que le transport lit les variables d'environnement."""
+    monkeypatch.delenv("OPENCLAW_BRIDGE_URL", raising=False)
+    monkeypatch.setenv("OPENCLAW_BRIDGE_TOKEN", TEST_TOKEN)
     transport = OpenClawTransport(agent="test-agent")
     assert transport._bridge_url == "http://openclaw-bridge:8000"
-    assert transport._token == "bridge-super-secret-token-2026"
+    assert transport._token == TEST_TOKEN
+
+
+def test_transport_requires_token(monkeypatch):
+    """Sans OPENCLAW_BRIDGE_TOKEN, le transport refuse de démarrer."""
+    monkeypatch.delenv("OPENCLAW_BRIDGE_TOKEN", raising=False)
+    with pytest.raises(RuntimeError):
+        OpenClawTransport(agent="test-agent")
 
 
 @patch("httpx.Client")
@@ -184,7 +201,7 @@ def test_send_prompt_builds_correct_request(mock_client):
     transport = OpenClawTransport(
         agent="fishey",
         bridge_url="http://test-bridge:8000",
-        token="test-token"
+        token=TEST_TOKEN
     )
     result = transport.send_prompt("ping")
 
@@ -193,7 +210,7 @@ def test_send_prompt_builds_correct_request(mock_client):
         json={"prompt": "ping", "timeout_seconds": 120},
         headers={
             "Content-Type": "application/json",
-            "X-Bridge-Token": "test-token",
+            "X-Bridge-Token": TEST_TOKEN,
         },
     )
     assert result == {"success": True, "response": "OK"}
@@ -213,7 +230,7 @@ def test_send_prompt_with_session_id():
         transport = OpenClawTransport(
             agent="fishey",
             bridge_url="http://test-bridge:8000",
-            token="test-token"
+            token=TEST_TOKEN
         )
         transport.send_prompt("test", session_id="session-123")
 
@@ -259,12 +276,13 @@ docker exec "${PROJECT_NAME}-back" curl -s http://openclaw-bridge:8000/health
 # → {"status":"ok","service":"openclaw-bridge"}
 
 # 3. Tester un appel complet (ping)
+#    Le token est lu dans l'env du conteneur, jamais tapé en clair.
 docker exec "${PROJECT_NAME}-back" python -c "
-import httpx
+import httpx, os
 r = httpx.post(
     'http://openclaw-bridge:8000/api/internal/v1/agents/fishey/send',
     json={'prompt': 'ping', 'timeout_seconds': 30},
-    headers={'X-Bridge-Token': 'bridge-super-secret-token-2026'}
+    headers={'X-Bridge-Token': os.environ['OPENCLAW_BRIDGE_TOKEN']}
 )
 print(r.status_code, r.json())
 "

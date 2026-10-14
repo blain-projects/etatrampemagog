@@ -105,13 +105,14 @@ Si tu as besoin d'un agent spécifique :
 python3 -c "import json; print('\n'.join(a['id'] for a in json.load(open('/home/blain/.openclaw/openclaw.json'))['agents']['list']))"
 
 # Ping un agent depuis ton conteneur backend (${PROJECT_NAME}-back, PROJECT_NAME vient du .env)
+# Le token est lu dans l'env du conteneur (OPENCLAW_BRIDGE_TOKEN), jamais tapé en clair.
 PROJECT_NAME="$(sed -n 's/^PROJECT_NAME=//p' .env)"
 docker exec "${PROJECT_NAME}-back" python -c "
-import httpx
+import httpx, os
 r = httpx.post(
     'http://openclaw-bridge:8000/api/internal/v1/agents/tier2/send',
     json={'prompt': 'réponds juste OK', 'timeout_seconds': 30},
-    headers={'X-Bridge-Token': 'bridge-super-secret-token-2026'}
+    headers={'X-Bridge-Token': os.environ['OPENCLAW_BRIDGE_TOKEN']}
 )
 print(r.status_code, r.json())
 "

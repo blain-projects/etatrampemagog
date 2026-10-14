@@ -1,4 +1,4 @@
-<!-- BEGIN blain-agent-kit:agents (managed v0.5.1) -->
+<!-- BEGIN blain-agent-kit:agents (managed v0.5.3) -->
 ## Méthodo agent blain-projects (managée par blain-agent-kit)
 
 > Ce bloc est **managé par blain-agent-kit**. Ne l'édite pas ici : modifie le repo `blain-agent-kit`, le sync le réinjectera. Tout texte hors de ce bloc reste local et n'est jamais touché.

@@ -12,7 +12,10 @@ This document defines how to configure the app by desired security level.
 ### "Firewall" / network protection
 
 - Expose only Traefik publicly.
-- Keep backend and internal services on private Docker network `web_network`.
+- Keep backend and internal services on private Docker network `web_network` by default. A project exception
+  (another network, an `--internal` network) is documented in `AI skills/deployment-architecture.local.md`,
+  which takes precedence, after an `/approve` (`.cursor/rules/10-security.mdc`); it only changes the network,
+  never the no-exposed-ports rule.
 - Restrict admin routes (IP allowlist, dedicated Traefik middleware, or required auth).
 - Enable proxy-level rate limiting to reduce brute-force and abuse.
 
