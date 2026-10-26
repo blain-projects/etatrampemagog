@@ -29,5 +29,4 @@
 @media (prefers-reduced-motion: reduce) {
   .brand-shell *, .brand-shell *::before, .brand-shell *::after { scroll-behavior: auto; }
 }
-.brand-ramp-header { align-items: center; flex-wrap: wrap; max-width: 720px; margin-inline: auto; }
-.brand-ramp-header h1 { font-size: clamp(1rem, 3vw, 1.65rem); }
+.bui-header h1 { font-size: clamp(1rem, 3vw, 1.65rem); }
