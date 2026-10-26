@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "3.1.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@blain-projects/ui": "^1.7.2",
+    "@blain-projects/ui": "^2.0.4",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/vite": "^4.2.4",
     "class-variance-authority": "^0.7.1",

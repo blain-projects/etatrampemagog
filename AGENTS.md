@@ -13,3 +13,12 @@ Les apps blain-projects partent d'un **template** : on **fork → déploie via O
 - **Redéploiement en prod** (`AI skills/prod-redeploy.md`) : le code est cuit dans l'image, donc un changement n'est live qu'après `docker compose up -d --build` depuis le checkout de prod. Rebuild, redéploie et vérifie que c'est servi **avant** de demander une review — sinon Guillaume review l'ancienne version.
 - **Design system** (`30-blain-ui`) : toute l'UI depuis `@blain-projects/ui`, zéro primitive maison / hex brut, **mobile-first minimal** testé à 375px.
 <!-- END blain-agent-kit:agents -->
+
+## Version de l'app
+
+`frontend/package.json` → `version` est affichée dans le SiteFooter (avec le commit
+déployé). Point de départ fixé le 2026-10-26 lors de la migration Liquid 2, estimé
+d'après la quantité de travail. À chaque changement livré, l'agent l'incrémente
+en semver, dans le même commit que le changement : correctif → patch,
+fonctionnalité → minor, refonte ou rupture → major
+(`npm version <patch|minor|major> --no-git-tag-version` dans `frontend/`).
