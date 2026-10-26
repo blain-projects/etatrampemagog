@@ -10,7 +10,7 @@ export const project = {
   maintainer: 'Guillaume Blain',
   // TODO(guillaume): contact (adresse publique à afficher).
   hosting: 'Traefik · Docker',
-  repoUrl: 'https://github.com/Blain354/etatrampemagog',
+  repoUrl: 'https://github.com/blain-projects/etatrampemagog',
   branch: 'main',
 }
 

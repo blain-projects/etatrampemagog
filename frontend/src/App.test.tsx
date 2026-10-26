@@ -14,7 +14,7 @@ test('the page ends on the site footer with the repo, the version and the data s
   const footer = screen.getByRole('contentinfo')
   expect(footer.className).toContain('bui-site-footer')
   expect(within(footer).getByRole('link', { name: 'etatrampemagog' }).getAttribute('href'))
-    .toBe('https://github.com/Blain354/etatrampemagog')
+    .toBe('https://github.com/blain-projects/etatrampemagog')
   expect(within(footer).getByText(__APP_VERSION__)).toBeTruthy()
   expect(within(footer).getByRole('link', { name: /Ville de Magog/ })).toBeTruthy()
 })
