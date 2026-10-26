@@ -4,9 +4,9 @@ This document governs creation and modification of UI in this app.
 
 ## Stack
 
-- **`@blain-projects/ui` 1.7.2** — Liquid original theme (`theme.css`), shared chrome (`Header`, `ThemeToggle`), and primitives (`Button`, `Card`, `Badge`, …). See `frontend/BRAND-INTEGRATION.md`.
+- **`@blain-projects/ui` 2.0.4** — Liquid 2 theme (`theme.css`), shared chrome (`AppShell`, `SiteFooter`, `ThemeToggle`), and primitives (`Button`, `Card`, `Badge`, …). See `frontend/BRAND-INTEGRATION.md`.
 - **Tailwind CSS v4** — consumed through the kit theme import in `frontend/src/index.css`. Do not re-import `tailwindcss` there, and do not bring back a `tailwind.config.ts`.
-- **App adapters** — `frontend/src/brand-integration.css` reserves measured header/footer offsets and styles dense popups; it does not re-define floating header chrome.
+- **App adapters** — `frontend/src/brand-integration.css` reserves measured header/footer offsets and styles dense popups; it does not re-define shell chrome.
 
 ## Implementation standards
 
@@ -20,6 +20,7 @@ When adding or changing UI:
 
 ## Where to look
 
-- `frontend/BRAND-INTEGRATION.md` — package version, floating header, theme contract.
-- `docs/ui-uniformity-2026-10-08.md` — dated note for the 2026-10-08 uniformity pass.
-- `frontend/src/App.tsx` — live composition of Header, theme toggle, Card, and status content.
+- `frontend/BRAND-INTEGRATION.md` — package version, AppShell / SiteFooter, theme and build-token contract.
+- `frontend/src/project.ts` — SiteFooter identity (`repoUrl`, hosting, tagline) and show-off default.
+- `docs/ui-uniformity-2026-10-08.md` — dated note for the 2026-10-08 uniformity pass (historical; kit was `^1.7.2` then).
+- `frontend/src/App.tsx` — live composition of AppShell, theme toggle, SiteFooter, Card, and status content.
