@@ -26,7 +26,7 @@ Before editing frontend UI styles/components, read:
   - focus-visible: explicit ring via token
   - disabled: reduced emphasis, still readable
 - Preserve light/dark support for all new UI styles.
-- **Header theme toggle:** the main app shell must include a light/dark control in the **header** (kit floating `Header`), wired to `data-theme` on the document root, with system preference as the default when unset.
+- **Header theme toggle:** the main app shell must include a light/dark control in the **header** (kit `AppShell` header actions), wired to `data-theme` on the document root, with system preference as the default when unset.
 
 ## Quick Checklist
 
