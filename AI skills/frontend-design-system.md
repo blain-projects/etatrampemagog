@@ -4,7 +4,7 @@ This document governs creation and modification of UI in this app.
 
 ## Stack
 
-- **`@blain-projects/ui` 2.0.4** — Liquid 2 theme (`theme.css`), shared chrome (`AppShell`, `SiteFooter`, `ThemeToggle`), and primitives (`Button`, `Card`, `Badge`, …). See `frontend/BRAND-INTEGRATION.md`.
+- **`@blain-projects/ui` 2.1.1** — Liquid 2 theme (`theme.css`), shared chrome (`AppShell`, `SiteFooter`, `ThemeToggle`), and primitives (`Button`, `Card`, `Badge`, …). See `frontend/BRAND-INTEGRATION.md`.
 - **Tailwind CSS v4** — consumed through the kit theme import in `frontend/src/index.css`. Do not re-import `tailwindcss` there, and do not bring back a `tailwind.config.ts`.
 - **App adapters** — `frontend/src/brand-integration.css` reserves measured header/footer offsets and styles dense popups; it does not re-define shell chrome.
 

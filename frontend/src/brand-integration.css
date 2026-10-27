@@ -3,9 +3,7 @@
 :root[data-theme="dark"] { color-scheme: dark; }
 .brand-shell {
   box-sizing: border-box;
-  padding-top: var(--bui-header-offset, 84px);
   padding-bottom: var(--bui-footer-offset, 0px);
-  scroll-padding-top: var(--bui-header-offset, 84px);
   scroll-padding-bottom: var(--bui-footer-offset, 0px);
 }
 
@@ -14,7 +12,6 @@
   background: var(--bui-popup-bg); color: var(--bui-text);
 }
 .brand-shell :is(a, button, input, textarea, select, [tabindex], [id]) {
-  scroll-margin-top: var(--bui-header-offset, 84px);
   scroll-margin-bottom: var(--bui-footer-offset, 0px);
 }
 .brand-header-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
