@@ -43,18 +43,26 @@ Amène ton commit dans ce checkout :
 ## 3) Rebuild + recréer les conteneurs
 
 ```bash
+cd <checkout> && ./scripts/check-build-secrets.sh        # garde du token npm, doit passer
 cd <checkout> && docker compose up -d --build            # toute l'app
 cd <checkout> && docker compose up -d --build frontend   # un seul service
 ```
 
 - Le build se fait **avant** l'arrêt de l'ancien conteneur : si le build échoue, la
   version précédente reste en ligne.
-- Frontend : le build lit `NODE_AUTH_TOKEN` depuis l'environnement du shell qui lance
-  compose ; compose le passe comme secret BuildKit `npm_token`
-  (`docker-compose.yml` → `frontend/Dockerfile`), jamais en build-arg ni via le `.env`
-  du checkout. Un 401/403 sur `npm install` = token absent ou expiré, pas un bug de
-  code. `scripts/check-build-secrets.sh` (appelé par `validate-deploy-ready.sh`) refuse
-  le formulaire build-arg.
+- Frontend : le build a besoin de `NODE_AUTH_TOKEN` (package privé `@blain-projects/ui`)
+  dans l'**environnement du shell** qui lance `docker compose`, **jamais** dans le `.env`
+  du checkout. `~/.bashrc` le charge depuis `~/.openclaw/secrets/npm-github.env`, même en
+  shell non interactif ; s'il est vide, `set -a; . ~/.openclaw/secrets/npm-github.env;
+  set +a` dans le même shell. Compose le passe au build en secret BuildKit `npm_token`
+  (`docker-compose.yml` → `secrets:`, puis `frontend/Dockerfile` →
+  `RUN --mount=type=secret,id=npm_token,env=NODE_AUTH_TOKEN npm ci`). Jamais d'`ARG` ni
+  de `--build-arg NODE_AUTH_TOKEN` : BuildKit les garde en clair dans son historique.
+- `./scripts/check-build-secrets.sh` vérifie tout ça et doit passer avant le rebuild.
+  S'il échoue, ne builde pas : passer le projet au secret `npm_token` touche un
+  credential, donc `/approve` (`10-security`), sur le modèle de `web_projects_template`.
+  Un projet qui n'a pas encore le script le reprend de `web_projects_template/scripts/`.
+- Un 401/403 sur `npm ci` = token absent ou expiré dans ton shell, pas un bug de code.
 - Backend : `alembic upgrade head` roule au démarrage, donc la migration s'applique au
   redeploy. Les données vivent dans le volume `/app/data` et survivent au rebuild.
 

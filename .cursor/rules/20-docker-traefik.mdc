@@ -19,6 +19,17 @@ alwaysApply: false
 - Le frontend utilise `apiFetch()` — JAMAIS `fetch()` nu.
 - Pas de `localhost` en production (utilise les noms de service / domaines).
 
+## Statistiques de visite
+- Tout site public charge, dans le `<head>` de ses pages, la ligne commune :
+  `<script async src="https://stats.blain-projects.ca/t.js"></script>` (le template l'a déjà).
+  Elle ne fait rien tant que le site est privé. Dès que le site est public (sans `google-auth`),
+  le réconciliateur de serveur-blain (`~/umami/bin/reconcile.py`, toutes les 15 min) le compte :
+  Umami auto-hébergé, sans témoin chez le visiteur, sans IP stockée.
+- Un site avec un CSP ajoute `https://stats.blain-projects.ca` à `script-src` et à `connect-src`.
+- Si Guillaume demande d'omettre les statistiques d'un site : label `blain.stats=off` sur le
+  conteneur du front (`blain.stats=pages` : pages vues sans replays). Hors Docker : une ligne
+  dans `~/umami/omit.txt`. Jamais la ligne retirée seule : le réconciliateur le signalerait.
+
 ## Persistance
 - Utilise des volumes pour toute donnée à persister.
 
