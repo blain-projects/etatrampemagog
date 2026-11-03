@@ -181,9 +181,9 @@ function App() {
             <CardHeader>
               <div className="flex items-center justify-center">
                 <Badge tone={statusTone(status)}>
-                  {status === 'open' && 'EN DIRECT'}
-                  {status === 'closed' && 'FERMÉE'}
-                  {status === 'unknown' && 'INDÉTERMINÉ'}
+                  {status === 'open' && 'En direct'}
+                  {status === 'closed' && 'Fermée'}
+                  {status === 'unknown' && 'Indéterminé'}
                 </Badge>
               </div>
             </CardHeader>

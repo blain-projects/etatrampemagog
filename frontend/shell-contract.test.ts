@@ -18,3 +18,11 @@ test('index.html declares the safe areas and the F4 webfonts', () => {
 test('app CSS does not re-reserve the header band', () => {
   expect(brandCss).not.toMatch(/(padding|scroll-margin|scroll-padding)-top: var\(--bui-header-offset/)
 })
+
+const appCss = read('./src/App.css')
+
+test('local motion loops only on the loading indicator', () => {
+  expect(appCss).not.toMatch(/pulse-dot|wave-move|stream-flow|rotate\(|cubic-bezier/)
+  expect(appCss).toMatch(/\.spin\s*\{[^}]*250ms ease-out infinite/)
+  expect(appCss).toMatch(/prefers-reduced-motion:\s*reduce[\s\S]*\.spin[\s\S]*animation:\s*none/)
+})
