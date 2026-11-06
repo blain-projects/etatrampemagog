@@ -3,7 +3,7 @@
    carte de statut (.status-card, .app-shell, etc.) ont été retirés :
    ils sont désormais rendus par les composants du design system.
    On ne garde QUE la jauge de débit (FlowGauge), qui n'a pas
-   d'équivalent dans le design system, et l'animation spin. Les
+   d'équivalent dans le design system. Les
    références aux tokens locaux Steel sont remappées sur les tokens
    --bui-* du design system. */
 
@@ -101,20 +101,4 @@
   font-size: 1rem;
   color: var(--bui-muted);
   font-style: italic;
-}
-
-/* Chargement seulement : fondu, sans rotation. prefers-reduced-motion le coupe. */
-.spin {
-  animation: spin 250ms ease-out infinite;
-}
-
-@keyframes spin {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .spin {
-    animation: none !important;
-  }
 }

@@ -1,6 +1,6 @@
 import { BrandThemeToggle } from './BrandThemeToggle'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { AlertCircle, CheckCircle2, Loader2, RefreshCw, Ship, XCircle } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Ship, XCircle } from 'lucide-react'
 import {
   Badge,
   AppShell,
@@ -10,6 +10,7 @@ import {
   CardHeader,
   Display,
   Heading,
+  LoadingState,
   MonoLabel,
   SiteFooter,
   Text,
@@ -107,7 +108,6 @@ function App() {
   }, [loadStatus])
 
   const status = rampStatus?.status ?? 'unknown'
-  const isRefreshing = loadState === 'loading' && rampStatus !== null
 
   return (
     <AppShell
@@ -130,10 +130,9 @@ function App() {
           variant="ghost"
           size="sm"
           onClick={handleRefresh}
-          disabled={loadState === 'loading' || isButtonDisabledTimer}
-          aria-busy={loadState === 'loading'}
+          loading={loadState === 'loading'}
+          disabled={isButtonDisabledTimer}
         >
-          <RefreshCw className={isRefreshing ? 'spin' : undefined} aria-hidden="true" />
           Actualiser
         </Button></div>
       }
@@ -147,14 +146,7 @@ function App() {
       }
     >
         {loadState === 'loading' && rampStatus === null && (
-          <Card corners className="w-full">
-            <CardBody>
-              <div className="flex flex-col items-center gap-4 text-center" aria-live="polite">
-                <Loader2 className="status-icon spin text-[var(--bui-muted)]" aria-hidden="true" />
-                <Text className="text-[var(--bui-muted)]">Chargement du statut…</Text>
-              </div>
-            </CardBody>
-          </Card>
+          <LoadingState className="w-full" label="Chargement du statut…" />
         )}
 
         {loadState === 'error' && (

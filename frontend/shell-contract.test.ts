@@ -21,8 +21,11 @@ test('app CSS does not re-reserve the header band', () => {
 
 const appCss = read('./src/App.css')
 
-test('local motion loops only on the loading indicator', () => {
+test('local spinner is gone; the kit owns loading', () => {
   expect(appCss).not.toMatch(/pulse-dot|wave-move|stream-flow|rotate\(|cubic-bezier/)
-  expect(appCss).toMatch(/\.spin\s*\{[^}]*250ms ease-out infinite/)
-  expect(appCss).toMatch(/prefers-reduced-motion:\s*reduce[\s\S]*\.spin[\s\S]*animation:\s*none/)
+  expect(appCss).not.toMatch(/@keyframes\s+\w*spin|\.spin\s*\{|animate-spin/)
+  const app = read('./src/App.tsx')
+  expect(app).toContain('<LoadingState')
+  expect(app).toContain('loading={loadState === \'loading\'}')
+  expect(app).not.toMatch(/\bLoader2\b|\bRefreshCw\b|className="status-icon spin/)
 })
