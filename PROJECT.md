@@ -21,7 +21,7 @@ Plaisanciers, résidents et visiteurs du lac Memphrémagog qui utilisent la ramp
 
 ## Design Identity
 
-- **Style:** Minimal, lisible, mobile-first (Liquid 2 via `@blain-projects/ui` 3.0.0 — `AppShell` / `SiteFooter`)
+- **Style:** Minimal, lisible, mobile-first (Liquid 2 via `@blain-projects/ui` 3.2.0 — `AppShell` / `SiteFooter`)
 - **Primary color:** Vert (ouverte) / Rouge (fermée) sur fond Liquid
 - **Vibe:** Utilitaire, rassurant, immédiat
 
