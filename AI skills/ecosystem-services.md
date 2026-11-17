@@ -50,7 +50,7 @@
 
 | Hostname | Port | Description |
 |----------|------|-------------|
-| `openclaw-bridge` | 8000 | API HTTP vers tout agent OpenClaw — voir `OPENCLAW.md` |
+| `openclaw-bridge` | — | Retiré : ne pas l'appeler (avis dans `openclaw-bridge.md`). Depuis un backend, joindre un profil Hermes comme l'écrit `project-context.md`. |
 | `openclaw-mcp` | 3100 | Serveur MCP exposant les capabilities OpenClaw (image gen, search, etc.) |
 
 ### Automatisation
@@ -143,9 +143,8 @@ docker network inspect web_network \
   besoin (voir `docker-compose.yml` du template, section commentée).
 - ❌ Redis centralisé — idem.
 - ❌ Object storage (S3) — pas de MinIO/S3 partagé.
-- ❌ Gateway OpenClaw direct — passe **toujours** par `openclaw-bridge` ou
-  `host-gateway:18790`. Le gateway lui-même (`:18789`) est WebSocket et
-  n'est pas conçu pour des appels HTTP simples.
+- ❌ Gateway OpenClaw et `openclaw-bridge` — retirés (voir `openclaw-bridge.md`).
+  Depuis un backend, joindre un profil Hermes comme l'écrit `project-context.md`.
 
 ## Quand demander l'ajout d'un service partagé
 

@@ -11,15 +11,11 @@
 - **Caveman mode**: when user says "caveman", "less tokens", or "be brief", switch to ultra-compressed communication (see `AI skills/caveman-mode.md`). Stay in caveman until told to stop.
 
 ## Code Quality Standards
-- Functions: <50 lines
-- Files: <800 lines (200-400 typical)
-- No deep nesting (>4 levels)
+- Split by job, never by line count
 - Early returns over nested conditionals
-- Extract utilities from large modules
 
 ## Decision Making
 - Prefer simplest solution that works (KISS)
-- Extract repetition into shared utilities (DRY)
 - Don't build before it's needed (YAGNI)
 - Optimize for clarity over cleverness
 

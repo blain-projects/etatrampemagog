@@ -81,9 +81,8 @@ Au moindre doute sur le scope (≥ strate 2), **demande à Guillaume** avant d'a
    Un bump patch/minor **1.x** est donc auto-satisfait : pas besoin d'éditer leurs
    `package.json`. Il suffit de `npm update @blain-projects/ui` + **rebuild/redeploy**
    par repo.
-3. Redeploy = **on-server** (OpenClaw/Buddy) : voir `openclaw-bridge.md`. Délègue les
-   rebuilds prod à OpenClaw (l'agent portable a un plafond de ~60s/appel, inadapté aux
-   builds multi-minutes).
+3. Redeploy = **on-server**, depuis le checkout de prod : voir `prod-redeploy.md`
+   (`docker compose up -d --build`, puis vérifier que le changement est servi).
 4. **Valide en prod** : capture chaque app (tool MCP `take_screenshot` — bypasse l'OAuth)
    et confirme le fix visuellement.
 

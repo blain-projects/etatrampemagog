@@ -35,11 +35,9 @@ Run the loop. Confirm:
 
 ## Phase 3 — Hypothesize
 
-Generate **3–5 ranked hypotheses** before testing any. Each must be falsifiable:
+Rank your hypotheses before testing any. Each must be falsifiable:
 
 > "If <X> is the cause, then changing <Y> will make the bug disappear / changing <Z> will make it worse."
-
-Show the ranked list to the user before testing — they often re-rank instantly with domain knowledge.
 
 ## Phase 4 — Instrument
 
