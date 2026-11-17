@@ -1,4 +1,4 @@
-<!-- BEGIN blain-agent-kit:agents (managed v0.6.2) -->
+<!-- BEGIN blain-agent-kit:agents (managed v0.6.3) -->
 ## Méthodo agent blain-projects (managée par blain-agent-kit)
 
 > Ce bloc est **managé par blain-agent-kit**. Ne l'édite pas ici : modifie le repo `blain-agent-kit`, le sync le réinjectera. Tout texte hors de ce bloc reste local et n'est jamais touché.
@@ -10,6 +10,8 @@ Les apps blain-projects partent d'un **template** (fork). Le déploiement suit `
 Dans ce dépôt, tu es l'**expert local du projet**. Pour une décision qui touche l'infra de Guillaume (réseau, déploiement, design system, bots, données partagées), lis d'abord le **catalogue des skills de la flotte**, en lecture seule :
 - sur serveur-blain : `~/blain-skills/CATALOG.md` (chaque skill : `~/blain-skills/plugins/<domaine>/skills/<skill>/SKILL.md`) ;
 - ailleurs, ou en cloud : le dépôt GitHub `Blain354/blain-skills`, fichier `CATALOG.md`.
+
+**Fichiers managés par le kit, à ne jamais éditer dans ce dépôt** (la synchro les réécrit, et une édition sur place bloque la synchro) : ce bloc, `.cursor/rules/*`, `.agent/*`, et tout `AI skills/*.md` qui n'est pas un `*.local.md`. Une correction de leur texte se fait dans le dépôt `blain-projects/blain-agent-kit` (`managed/`) ; un fait propre à ce projet va dans `AI skills/<nom>.local.md`.
 
 Ne recopie aucun skill dans ce dépôt, et ne délègue pas le travail à un autre agent. La mémoire de Guillaume (règles, décisions, état) est le vault : `~/SynologyDrive/Knowledge_base/AGENTS.md` sur serveur-blain.
 

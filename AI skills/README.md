@@ -32,8 +32,8 @@ This directory centralizes technical context and working rules for AI agents bui
 
 ### Technical reference
 - `api-endpoints.md`: existing backend endpoints and API conventions.
-- `openclaw-bridge.md`: intégration OpenClaw Agent Bridge — comment connecter ton backend aux agents IA.
-- `openclaw-agents-catalog.md`: liste des 13 agents OpenClaw disponibles avec leurs `id` et spécialités.
+- `openclaw-bridge.md`: avis de retrait (2026-10-30) — ne pas l’utiliser ; le fichier indique quoi lire à la place.
+- `openclaw-agents-catalog.md`: avis de retrait (2026-10-30) — ne pas l’utiliser ; le fichier indique quoi lire à la place.
 - `ecosystem-services.md`: services partagés sur `web_network` (n8n, openclaw-mcp, nextcloud, etc.).
 - `deployment-architecture.md`: Docker/Traefik architecture and deployment constraints (+ `deployment-architecture.local.md` for a project exception, if present).
 - `security-modes.md`: security options (Google Auth, network protection, dev vs prod).

@@ -27,8 +27,10 @@
 ## Images bake application code
 
 - Frontend and backend Dockerfiles `COPY` source into the image at build time
-  (`frontend/Dockerfile`, `backend/Dockerfile`). Compose mounts only the named
-  volume `backend_sqlite_data` at `/app/data` — there is no source bind mount.
+  (`frontend/Dockerfile`, `backend/Dockerfile`). Compose mounts the named
+  volume `backend_sqlite_data` at `/app/data`. There is no application-source
+  bind mount. Other mounts in this checkout are in
+  `deployment-architecture.local.md`.
 - Editing, committing, or pushing therefore does not change the live site until
   images are rebuilt and containers recreated from the prod checkout.
 - After a prod change that must be reviewed live, follow `prod-redeploy.md`
