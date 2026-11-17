@@ -34,9 +34,10 @@
   Generic alias `http://backend:5000` only resolves if the compose service is named `backend`
   AND containers share the same compose project network — for cross-project calls always use
   the explicit container name.
-- From a backend on `web_network`, reach an OpenClaw agent with
-  `http://openclaw-bridge:8000/api/internal/v1/agents/{id}/send`.
-  See `OPENCLAW.md` and `openclaw-agents-catalog.md`.
+- From a backend, reach a Hermes agent profile through the host gateway:
+  `POST http://host.docker.internal:8642/p/<profile>/v1/runs` (needs `extra_hosts:
+  host.docker.internal:host-gateway`). See the app's own agent doc when it has one
+  (`AGENT.md`, `docs/agent-chat.md`).
 
 ## Important constraints
 

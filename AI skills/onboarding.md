@@ -262,7 +262,7 @@ verify).
 | Delete `ONBOARDING.md` manually | Let `finalize-onboarding.sh` do it (it gates on substitutions succeeding) |
 | Improvise answers | Always ask; never assume |
 | Skip phases under user pressure | Acknowledge urgency, complete anyway (3 min) |
-| Touch generic infra docs in finalization | Keep `NETWORK.md`, `OPENCLAW.md`, `AI skills/*` generic; project-specific facts go to `AI skills/<skill>.local.md` |
+| Touch generic infra docs in finalization | Keep `NETWORK.md`, `AGENT.md` (ex `OPENCLAW.md`), `AI skills/*` generic; project-specific facts go to `AI skills/<skill>.local.md` |
 
 ## Token-saving tips
 

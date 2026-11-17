@@ -1,4 +1,4 @@
-<!-- BEGIN blain-agent-kit:agents (managed v0.6.0) -->
+<!-- BEGIN blain-agent-kit:agents (managed v0.6.2) -->
 ## Méthodo agent blain-projects (managée par blain-agent-kit)
 
 > Ce bloc est **managé par blain-agent-kit**. Ne l'édite pas ici : modifie le repo `blain-agent-kit`, le sync le réinjectera. Tout texte hors de ce bloc reste local et n'est jamais touché.
@@ -19,6 +19,7 @@ Ne recopie aucun skill dans ce dépôt, et ne délègue pas le travail à un aut
 - **Docker / Traefik** (`20-docker-traefik`) : `web_network` par défaut (exception de projet dans `AI skills/deployment-architecture.local.md`, après `/approve`), jamais de ports exposés (labels Traefik), `apiFetch()` côté front. Un site public est compté dans les statistiques de visite (ligne `t.js` du template) ; si Guillaume demande de l'omettre : label `blain.stats=off`.
 - **Redéploiement en prod** (`AI skills/prod-redeploy.md`) : le code est cuit dans l'image, donc un changement n'est live qu'après `docker compose up -d --build` depuis le checkout de prod. Rebuild, redéploie et vérifie que c'est servi **avant** de demander une review — sinon Guillaume review l'ancienne version.
 - **Design system** (`30-blain-ui`) : toute l'UI depuis `@blain-projects/ui`, zéro primitive maison / hex brut, **mobile-first minimal** testé à 375px.
+- **Code minimal : ponytail** (skill `ponytail`, plugin `tiers-code` du catalogue de la flotte) : avant d'écrire ou de modifier du code, charge ce skill et suis-le : le plus petit changement qui règle toute la tâche ; ni abstraction, ni option, ni dépendance que personne n'a demandée. Les règles ci-dessus passent avant lui : le test écrit et lancé avant « done », l'UI depuis `@blain-projects/ui` même quand un diff plus court existe, le redéploiement vérifié. Les repères de `AI skills/generic-agentic-rules.md` et `AI skills/development-workflow.md` (tailles de fonction, DRY, couverture chiffrée, « battle-tested ») restent des repères, pas des obligations : là où ils divergent de ponytail, ponytail l'emporte.
 <!-- END blain-agent-kit:agents -->
 
 ## Version de l'app
