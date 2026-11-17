@@ -154,7 +154,7 @@ Our methodology addresses all three.
 
 ### The Flow: Clarify → Plan → Build → Verify → Debug
 
-Use this flow for every non-trivial change. Skip steps only when you can justify why.
+`AI skills/development-workflow.md` does not mandate this sequence. It states what to read and what to check. The `ponytail` skill and the rules in `AGENTS.md` and `.cursor/rules/` apply. The steps below are skills that remain in this repo when you choose them.
 
 #### Step 1: Clarify (Alignment) ⭐
 
@@ -174,21 +174,19 @@ The agent interviews you about the plan — ONE question at a time, walking down
 
 See: `AI skills/grill-session.md`
 
-#### Step 2: Plan (ReAct)
+#### Step 2: Plan
 
-**Trigger**: The agent reads the system prompt and generates a plan.
+`AI skills/development-workflow.md` does not require a plan before code. Before a change it asks you to read `project-context.md` and `deployment-architecture.md` (and a `.local.md` companion when one exists), to use `CONTEXT.md` vocabulary when that file exists, and to know the local and production impact.
 
-- **Thought**: What modules are affected? What's the right approach?
-- **Action**: What specific files/changes are needed?
-- **Verification**: How will we confirm it works?
+`.agent/system_prompt.md` does not open a ReAct loop or a planning step. Its execution loop reads `AGENTS.md`, `.specify/constitution.md`, and `CONTEXT.md` when that file exists, then runs `PROJECT_NAME=<name> ./scripts/validate-deploy-ready.sh`.
 
-Check the plan against `CONTEXT.md` vocabulary — are the module names right? Does it respect existing ADRs?
+ReAct is `.agent/workflows/plan-react.md`. It runs when that workflow is called, and then it asks for an implementation plan.
 
-See: `.agent/system_prompt.md`, `AI skills/development-workflow.md`
+See: `AI skills/development-workflow.md`, `.agent/system_prompt.md`, `.agent/workflows/plan-react.md`
 
 #### Step 3: Build (TDD Vertical Slices)
 
-**Trigger**: Say **"start building"** or approve the plan.
+**Trigger**: Say **"start building"**.
 
 The agent writes ONE test, then the implementation for that test, then repeats. This is the **vertical slice** approach — never "write all tests then all code".
 
@@ -216,7 +214,7 @@ See: `.cursor/rules/testing.mdc`, `.cursor/agents/tdd-guide.mdc`
 **Trigger**: Agent runs the verification checklist automatically.
 
 - [ ] Code builds/starts without errors
-- [ ] All tests passing (80%+ coverage)
+- [ ] Tests written for the change, run, passing (`.cursor/rules/testing.mdc` still requires 80% coverage)
 - [ ] Linting and type checking clean
 - [ ] Modified endpoints respond correctly
 - [ ] Docker/Traefik compatible
@@ -233,7 +231,7 @@ The agent follows a structured 6-phase loop:
 
 1. **Build a feedback loop** (70% of effort) — Find a fast, deterministic way to reproduce the bug
 2. **Reproduce** — Run the loop, watch the bug appear
-3. **Hypothesize** — Generate 3-5 ranked hypotheses, show them to you
+3. **Hypothesize** — Rank falsifiable hypotheses before testing any
 4. **Instrument** — One variable at a time, targeted logs/debugger
 5. **Fix + regression test** — Write the test BEFORE the fix
 6. **Cleanup** — Remove debug code, state the correct hypothesis in commit
@@ -320,16 +318,16 @@ See: `AI skills/domain-language.md`
 | Situation | Skill | Trigger |
 |-----------|-------|---------|
 | Starting a feature | Grill session | "grill me" |
-| Writing code | TDD vertical slices | Automatic (in workflow) |
+| Writing code | TDD vertical slices | `.cursor/rules/00-core.mdc`, `.cursor/rules/testing.mdc` |
 | Something's broken | Diagnose | "diagnose this" |
 | Saving tokens | Caveman mode | "caveman mode" |
 | New concept/term | Domain language | Agent proposes term → add to CONTEXT.md |
-| Planning | ReAct plan | Automatic (system prompt) |
+| Planning | ReAct workflow | `.agent/workflows/plan-react.md` |
 | Architecture review | Improvement | "find refactoring opportunities" |
 
 ### Anti-Patterns (What NOT To Do)
 
-1. **❌ Skipping the grill**: "I know what I want, just code it." — You don't. Grill it.
+1. **❌ Treating the grill as mandatory**: **"grill me"** runs `AI skills/grill-session.md`. `AI skills/development-workflow.md` does not require that interview before code.
 2. **❌ Horizontal TDD**: Writing all tests then all code → tests of imagined behavior
 3. **❌ Testing implementation**: Mocking internals → tests break on refactor
 4. **❌ No feedback loop**: Debugging by staring at code → wasting tokens
