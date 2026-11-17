@@ -15,7 +15,7 @@
   <a href="#-déploiement">Déploiement</a> ·
   <a href="#-agent-skills">AI Skills</a> ·
   <a href="how_to_use_repo.md">Guide méthodologique</a> ·
-  <a href="OPENCLAW.md">🤖 Communication OpenClaw</a>
+  <a href="OPENCLAW.md">Agents</a>
 </p>
 
 ---
@@ -104,35 +104,20 @@ Voir [`how_to_use_repo.md`](how_to_use_repo.md) pour le guide méthodologique co
 ```
 Browser → API (externe)  : https://api.[NAME].blain-projects.ca/api/...
 Docker → Docker (interne): http://backend:5000/api/...
-
-Agent OpenClaw (interne)  : http://openclaw-bridge:8000/api/internal/v1/agents/{agent}/send
 ```
 
 Le frontend utilise toujours l'URL publique. Les services Docker communiquent en interne via Docker DNS (plus rapide, bypass le proxy).
 
-### 🤖 Communication avec les Agents OpenClaw
+### Agents
 
-Ce template intègre une architecture standard pour communiquer avec n'importe quel agent OpenClaw (Fishey, Buddy, Makey, etc.) depuis ton backend Docker.
-
-🔗 **[Voir OPENCLAW.md](OPENCLAW.md)** pour la documentation complète : architecture, sécurité, code d'intégration, dépannage.
-
-En résumé (le token vient de l'env du conteneur, jamais en dur) :
-```python
-import httpx, os
-r = httpx.post(
-    "http://openclaw-bridge:8000/api/internal/v1/agents/fishey/send",
-    json={"prompt": "Ta question", "timeout_seconds": 120},
-    headers={"X-Bridge-Token": os.environ["OPENCLAW_BRIDGE_TOKEN"]},
-)
-print(r.json()["response"])  # Réponse JSON structurée de l'agent
-```
+Aucun module applicatif de ce dépôt n'appelle un agent. L'ancien guide du bridge OpenClaw ne doit plus être suivi : [`OPENCLAW.md`](OPENCLAW.md). La convention générique est dans [`AI skills/project-context.md`](AI%20skills/project-context.md), réécrite par blain-agent-kit.
 
 ---
 
 ## 📚 Documentation
 
 - [`how_to_use_repo.md`](how_to_use_repo.md) — Guide méthodologique complet (skills, workflow, anti-patterns)
-- [`OPENCLAW.md`](OPENCLAW.md) — 🤖 Architecture de communication avec les agents OpenClaw
+- [`OPENCLAW.md`](OPENCLAW.md) — retrait du guide bridge OpenClaw ; convention générique dans `AI skills/project-context.md`
 - [`AI skills/README.md`](AI skills/README.md) — Index des skills disponibles
 - [`NETWORK.md`](NETWORK.md) — Architecture réseau Traefik + Nginx
 
@@ -144,7 +129,7 @@ Ce template est construit sur le travail de la communauté open-source :
 
 | Projet | Contribution | Lien |
 |--------|-------------|------|
-| **Everything Claude Code (ECC)** | Skills, agents, rules, TDD workflow, security patterns, Docker patterns — le cœur de l'intégration agent du template | [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) |
+| **Everything Claude Code (ECC)** | Source historique des fiches `AI skills/ecc-skills/`, retirées en blain-agent-kit 0.6.2 | [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) |
 | **Matt Pocock's Skills** | Méthodologie de développement agent : grill sessions, diagnose loop, caveman mode, domain language (CONTEXT.md), TDD vertical slices | [mattpocock/skills](https://github.com/mattpocock/skills) |
 
-Les skills dans `AI skills/ecc-skills/` sont adaptés d'ECC. Les skills méthodologiques (`grill-session.md`, `diagnose.md`, `caveman-mode.md`, `domain-language.md`) sont adaptés de Matt Pocock. Les deux sont fusionnés avec l'approche ReAct et les conventions Docker/Traefik propres à ce template.
+Les fiches `AI skills/ecc-skills/` sont des avis de retrait (blain-agent-kit 0.6.2) : ce ne sont plus des règles. Les skills méthodologiques (`grill-session.md`, `diagnose.md`, `caveman-mode.md`, `domain-language.md`) restent adaptés de Matt Pocock.
